@@ -1,0 +1,104 @@
+import axios from 'axios';
+import type { ActionContext } from 'vuex';
+import type { User, UserState, ParamsLogin, ParamsRegister } from '../../types/user';
+
+type UserContext = ActionContext<UserState, unknown>;
+
+export default {
+    namespaced: true,
+    state: {
+        user: null,
+        token: localStorage.getItem('token') || '',
+        error: null,
+        loading: false
+    } as UserState,
+    mutations: {
+        SET_USER(state: UserState, user: User | null) {
+            state.user = user;
+        },
+        SET_TOKEN(state: UserState, token: string) {
+            state.token = token;
+        },
+        SET_ERROR(state: UserState, error: string | null) {
+            state.error = error;
+        },
+        CLEAR_ERROR(state: UserState) {
+            state.error = null;
+        },
+        SET_LOADING(state: UserState, loading: boolean) {
+            state.loading = loading;
+        },
+    },
+    actions: {
+
+        async login({ commit }: UserContext, credentials: ParamsLogin) {
+            commit('CLEAR_ERROR');
+            commit('SET_LOADING', true);
+            const backendUrl = import.meta.env.VITE_BACKEND_URL;
+            try {
+                const response = await axios.post(`${backendUrl}/auth/login`, credentials);
+
+                const token = response.data.token;
+                const user = response.data.user;
+
+                localStorage.setItem('token', token);
+
+                commit('SET_TOKEN', token);
+                commit('SET_USER', user);
+
+                commit('SET_LOADING', false);
+                return true;
+            } catch (e: any) {
+                commit('SET_ERROR', e.response?.data?.msg || 'Ошибка входа');
+                commit('SET_LOADING', false);
+                return false;
+            }
+        },
+
+        async register({ commit }: UserContext, userData: ParamsRegister) {
+            commit('CLEAR_ERROR');
+            commit('SET_LOADING', true);
+            const backendUrl = import.meta.env.VITE_BACKEND_URL;
+            try {
+                await axios.post(`${backendUrl}/auth/register`, userData);
+                commit('SET_LOADING', false);
+                return true;
+            } catch (e: any) {
+                commit('SET_ERROR', e.response?.data?.msg || 'Ошибка регистрации');
+                commit('SET_LOADING', false);
+                return false;
+            }
+        },
+
+        async fetchUser({ commit, state }: UserContext) {
+            if (!state.token) {
+                return;
+            }
+            const backendUrl = import.meta.env.VITE_BACKEND_URL;
+            try {
+                const response = await axios.get(`${backendUrl}/users/me`, {
+                    headers: {
+                        Authorization: `Bearer ${state.token}`
+                    }
+                });
+                commit('SET_USER', response.data.user);
+            } catch (e) {
+                commit('SET_USER', null);
+                commit('SET_TOKEN', '');
+                localStorage.removeItem('token');
+            }
+        },
+
+        logout({ commit }: UserContext) {
+            localStorage.removeItem('token');
+            commit('SET_TOKEN', '');
+            commit('SET_USER', null);
+        }
+    },
+    getters: {
+        isAuthenticated: (state: UserState) => !!state.token,
+        currentUser: (state: UserState) => state.user,
+        authError: (state: UserState) => state.error,
+        isLoading: (state: UserState) => state.loading
+    }
+};

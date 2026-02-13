@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  title: Eskov Sergey's test project API
+  description: ''
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+tags:
+  - name: auth
+    description: Authorization
+  - name: users
+    description: Access to Users
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: Successful response
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: Successful response
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+  /users/{id}:
+    get:
+      tags:
+        - users
+      security:
+        - bearerAuth: []
+      summary: Get User
+      description: ''
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: User id
+      responses:
+        '200':
+          description: Successful response
+    put:
+      tags:
+        - users
+      security:
+        - bearerAuth: []
+      summary: Update User
+      description: ''
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: User id
+      responses:
+        '200':
+          description: Successful response
