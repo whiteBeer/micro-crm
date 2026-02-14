@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
+import Clients from '../components/Clients/ClientsTable.vue';
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,11 @@ const router = new VueRouter({
         path: '/register',
         name: 'register',
         component: RegisterView
+    },
+    {
+        path: '/clients',
+        name: 'clients',
+        component: Clients
     },
     {
         path: '/about',

@@ -10,7 +10,7 @@ const errorHandlerMiddleware = (
     console.log(err);
 
     let customError = {
-        msg: "Unknown error",
+        msg: "unknown_error",
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR
     };
 
@@ -20,11 +20,13 @@ const errorHandlerMiddleware = (
             msg: err.message
         };
     } else if (err instanceof mongoose.Error.ValidationError) {
-        if (err.name === 'ValidationError') {
-            customError.msg = Object.values(err.errors)
-                .map((item: any) => item.path + ": " + item.message)
-                .join(',');
-            customError.statusCode = 400
+        if (err.name === "ValidationError") {
+            try {
+                customError.msg = Object.values(err.errors)[0].message;
+            } catch (e) {
+                customError.msg = "unknown_error";
+            }
+            customError.statusCode = 400;
         }
     }
 

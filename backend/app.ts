@@ -1,8 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { Server } from "http";
-import mongoose from "mongoose";
 import helmet from "helmet";
 import cors from "cors";
 import { xss } from "express-xss-sanitizer";
@@ -17,6 +15,7 @@ import connectDB from "./db/connect";
 import { handleShutdown } from "./handle-server-shutdown";
 import authRouter from "./routes/auth";
 import usersRouter from "./routes/users";
+import clientsRouter from "./routes/clients";
 
 // Swagger
 import swaggerUI from "swagger-ui-express";
@@ -39,6 +38,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", authenticationUser, usersRouter);
+app.use("/api/v1/clients", authenticationUser, clientsRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

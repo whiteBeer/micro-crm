@@ -1,45 +1,61 @@
 import { IClient } from "../types/global";
-import mongoose, {Types} from "mongoose";
-import { emailRegExp } from "../util/regexp";
+import mongoose from "mongoose";
+import {BadRequestError} from "../errors";
+import { emailRegExp, phoneRegExp } from "../util/regexp";
 
 const ClientSchema = new mongoose.Schema<IClient>({
     name: {
         type: String,
-        required: [true, "Please provide full name"],
-        minlength: [3, "must be at least 3 characters"],
-        maxlength: [150, "cannot be more than 150 characters"],
+        required: [true, "incorrect_name"],
+        minlength: [3, "incorrect_name"],
+        maxlength: [150, "incorrect_name"],
         index: true
     },
     email: {
         type: String,
-        required: [true, "Please provide email"],
+        required: false,
+        default: null,
         match: [
             emailRegExp,
-            "should be an email address"
+            "incorrect_email_address"
         ]
     },
     phone: {
         type: String,
-        required: [true, "Please provide client phone number"],
+        required: false,
+        default: null,
+        match: [
+            phoneRegExp,
+            "incorrect_phone_number"
+        ]
     },
     company: {
         type: String,
-        required: [true, "Please provide client company"],
+        required: false,
+        default: null
     },
     notes: {
         type: String,
-        required: [true, "Please provide notes"],
+        required: false,
+        default: null
     },
     status: {
         type: String,
         required: true,
-        enum: ["active", "inactive", "lead"]
+        enum: ["active", "inactive", "lead"],
+        default: "lead"
     },
     managerId: {
-        type: Types.ObjectId,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
     }
 }, { versionKey: false });
+
+ClientSchema.pre("validate", async function () {
+    if (!this.email && !this.phone) {
+        throw new BadRequestError("either_phone_or_email_required");
+    }
+});
 
 const Client = mongoose.model<IClient>("Client", ClientSchema);
 export default Client;

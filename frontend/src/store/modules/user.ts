@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { ActionContext } from 'vuex';
-import type { User, UserState, ParamsLogin, ParamsRegister } from '../../types/user';
+import type { User, UserState, ParamsLogin, ParamsRegister } from '@/types/user';
 
 type UserContext = ActionContext<UserState, unknown>;
 
