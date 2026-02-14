@@ -11,6 +11,10 @@ export interface Client {
 
 export interface ClientState {
     clients: Client[];
+    total: number;
+    skip: number;
+    limit: number;
+    search: string;
     loading: boolean;
     error: string | null;
 }

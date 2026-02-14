@@ -49,7 +49,10 @@ const ClientSchema = new mongoose.Schema<IClient>({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     }
-}, { versionKey: false });
+}, {
+    versionKey: false,
+    timestamps: true
+});
 
 ClientSchema.pre("validate", async function () {
     if (!this.email && !this.phone) {

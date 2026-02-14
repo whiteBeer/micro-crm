@@ -5,14 +5,32 @@ import { BadRequestError, NotFoundError } from "../errors";
 
 export const getClients = async (req: Request, res: Response) => {
     const managerId = req.user?._id;
+    const search:string = ((req.query.search as string) || "").replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "");
 
     if (!managerId) {
         throw new BadRequestError("User is not authenticated");
     }
 
-    const clients = await Client.find({ managerId: managerId });
+    const filter = search ? {
+        $or: [
+            { name: {$regex: search, $options: "i"} },
+            { email: {$regex: search, $options: "i"} },
+            { phone: {$regex: search, $options: "i"} }
+        ]
+    } : {};
 
-    res.status(StatusCodes.OK).json(clients);
+    let result = Client.find(filter);
+    const skip = Number(req.query.skip) || 0;
+    const limit = Number(req.query.limit) || 10;
+
+    result = result.sort("-createdAt").skip(skip).limit(limit);
+    const total = await Client.countDocuments(filter);
+    const clients = await result;
+
+    res.status(StatusCodes.OK).json({
+        total,
+        clients
+    });
 };
 
 export const getClient = async (req: Request, res: Response) => {
@@ -57,12 +75,12 @@ export const deleteClient = async (req: Request, res: Response) => {
         params: { id: clientId }
     } = req;
 
-    const job = await Client.findOneAndDelete({
+    const client = await Client.findOneAndDelete({
         _id: clientId
     });
 
-    if (!job) {
-        throw new NotFoundError(`No job with id ${clientId}`);
+    if (!client) {
+        throw new NotFoundError(`No client with id ${clientId}`);
     }
     res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
 };

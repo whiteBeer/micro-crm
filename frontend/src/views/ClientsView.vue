@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Clients from '@/components/Clients/ClientsTable.vue';
 import AppNavTabs from '@/components/AppNavTabs.vue';
 </script>
 
@@ -10,9 +11,13 @@ import AppNavTabs from '@/components/AppNavTabs.vue';
             </v-col>
             <v-col cols="12" md="10">
                 <main class="page-cont">
-                    Dashboard
+                    <Clients />
                 </main>
             </v-col>
         </v-row>
     </v-container>
 </template>
+
+<style>
+
+</style>

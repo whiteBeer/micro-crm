@@ -8,26 +8,26 @@ import { emailRegExp, passwordRegExp } from "../util/regexp";
 const UserSchema = new mongoose.Schema<IUser>({
     name: {
         type: String,
-        required: [true, "Please provide full name"],
-        minlength: [3, "must be at least 3 characters"],
-        maxlength: [150, "cannot be more than 150 characters"]
+        required: [true, "incorrect_name"],
+        minlength: [3, "incorrect_name"],
+        maxlength: [150, "incorrect_name"]
     },
     email: {
         type: String,
-        required: [true, "Please provide email"],
+        required: [true, "incorrect_email"],
         match: [
             emailRegExp,
-            "should be an email address"
+            "incorrect_email"
         ],
         index: { unique: true }
     },
     password: {
         type: String,
-        required: [true, "Please provide password"],
-        minlength: [8, "must be at least 8 characters"],
+        required: [true, "incorrect_password"],
+        minlength: [8, "incorrect_password"],
         match: [
             passwordRegExp,
-            "should be at least a symbol, upper and lower case letters and a number"
+            "incorrect_password"
         ]
     },
     role: {
@@ -37,9 +37,12 @@ const UserSchema = new mongoose.Schema<IUser>({
     },
     avatar: {
         type: String,
-        required: true,
+        required: true
     }
-}, { versionKey: false });
+}, {
+    versionKey: false,
+    timestamps: true
+});
 
 UserSchema.pre("save", async function () {
     const salt = await bcrypt.genSalt(10);

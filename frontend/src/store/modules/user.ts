@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import type { ActionContext } from 'vuex';
 import type { User, UserState, ParamsLogin, ParamsRegister } from '@/types/user';
 
@@ -48,8 +48,9 @@ export default {
 
                 commit('SET_LOADING', false);
                 return true;
-            } catch (e: any) {
-                commit('SET_ERROR', e.response?.data?.msg || 'Ошибка входа');
+            } catch (e:unknown) {
+                const error = e as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
                 commit('SET_LOADING', false);
                 return false;
             }
@@ -63,8 +64,9 @@ export default {
                 await axios.post(`${backendUrl}/auth/register`, userData);
                 commit('SET_LOADING', false);
                 return true;
-            } catch (e: any) {
-                commit('SET_ERROR', e.response?.data?.msg || 'Ошибка регистрации');
+            } catch (e:unknown) {
+                const error = e as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
                 commit('SET_LOADING', false);
                 return false;
             }

@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import ClientModal from './ClientModal.vue';
 import store from '@/store';
-import type {Client, ClientInput} from '@/types/clients';
+import type {Client} from '@/types/clients';
+
+interface ITableOptions {
+    page: number;
+    itemsPerPage: number;
+}
 
 const search = ref('');
 const dialog = ref(false);
@@ -15,46 +20,51 @@ const headers = [
     { text: 'Действия', value: 'actions', sortable: false },
 ];
 const clients = computed(() => store.getters['clients/allClients']);
+const total = computed(() => store.getters['clients/total']);
+const limit = computed(() => store.getters['clients/limit']);
+const loading = computed(() => store.getters['clients/isLoading']);
+const options = ref<ITableOptions>({page: 1, itemsPerPage: limit.value});
 
-const defaultItem:ClientInput = {
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    notes: '',
-    status: 'lead'
-};
-
-const editedItem = ref({ ...defaultItem });
-
-onMounted(() => {
-    store.dispatch('clients/fetchClients');
-});
+const editedItem = ref<Client | null>(null);
 
 const addClient = () => {
-    editedItem.value = { ...defaultItem };
+    editedItem.value = null;
     dialog.value = true;
 };
 
-const close = () => {
-    dialog.value = false;
-};
-
-const save = (editedClient:Client) => {
-    if (editedClient) {
-        alert(1);
-    }
-    close();
-};
-
 const editClient = (item:Client) => {
-    editedItem.value = { ...item };
+    editedItem.value = item;
     dialog.value = true;
 };
 
 const deleteClient = async (item:Client) => {
     await store.dispatch('clients/deleteClient', item._id);
 };
+
+// TODO: make debounce in common way
+let timeout:number;
+watch(search, async (val: string) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        store.commit('clients/SET_SEARCH', val);
+        store.commit('clients/SET_SKIP', 0);
+        if (options.value.page !== 1) {
+            options.value = { ...options.value, page: 1 };
+        } else {
+            store.dispatch('clients/fetchClients');
+        }
+    }, 500);
+});
+
+watch(options, async (newOptions:ITableOptions) => {
+    const { page, itemsPerPage } = newOptions;
+    if (page && itemsPerPage) {
+        const skip = (page - 1) * itemsPerPage;
+        store.commit('clients/SET_LIMIT', itemsPerPage);
+        store.commit('clients/SET_SKIP', skip);
+        await store.dispatch('clients/fetchClients');
+    }
+}, { deep: false });
 </script>
 
 <template>
@@ -67,7 +77,9 @@ const deleteClient = async (item:Client) => {
         </v-btn>
       </v-col>
 
-      <ClientModal v-model="dialog" :editedItem="editedItem" @save="save" />
+      <ClientModal :open="dialog"
+                   @close="dialog = false"
+                   :editedItem="editedItem" />
 
       <v-col cols="12" sm="6">
         <v-text-field
@@ -84,6 +96,14 @@ const deleteClient = async (item:Client) => {
       :headers="headers"
       :items="clients"
       :search="search"
+      :server-items-length="total"
+      :options.sync="options"
+      :loading="loading"
+      :footer-props="{
+          'items-per-page-options': [2, 5, 10, 50],
+          'items-per-page-text': 'Клиентов на странице'
+      }"
+      :items-per-page="limit"
       class="elevation-1"
     >
       <template v-slot:item.actions="{ item }">

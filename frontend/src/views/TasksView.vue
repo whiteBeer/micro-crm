@@ -10,9 +10,13 @@ import AppNavTabs from '@/components/AppNavTabs.vue';
             </v-col>
             <v-col cols="12" md="10">
                 <main class="page-cont">
-                    Dashboard
+                    Tasks
                 </main>
             </v-col>
         </v-row>
     </v-container>
 </template>
+
+<style>
+
+</style>

@@ -13,5 +13,6 @@ module.exports = {
         'indent': ['error', 4, { SwitchCase: 1 }],
         'semi': ['error', 'always'],
         '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
+        'vue/valid-v-slot': 'off'
     }
 };

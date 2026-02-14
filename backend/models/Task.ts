@@ -4,14 +4,15 @@ import mongoose, {Types} from "mongoose";
 const TaskSchema = new mongoose.Schema<ITask>({
     title: {
         type: String,
-        required: [true, "Please provide full name"],
-        minlength: [3, "must be at least 3 characters"],
-        maxlength: [150, "cannot be more than 150 characters"],
+        required: [true, "incorrect_name"],
+        minlength: [3, "incorrect_name"],
+        maxlength: [150, "incorrect_name"],
         index: true
     },
     description: {
         type: String,
-        required: [true, "Please provide task description"],
+        required: false,
+        default: null
     },
     status: {
         type: String,
@@ -25,17 +26,21 @@ const TaskSchema = new mongoose.Schema<ITask>({
     },
     dueDate: {
         type: Date,
-        required: true,
+        required: false,
+        default: null
     },
     clientId: {
         type: Types.ObjectId,
-        required: true,
+        required: true
     },
     assigneeId: {
         type: Types.ObjectId,
-        required: true,
+        required: true
     }
-}, { versionKey: false });
+}, {
+    versionKey: false,
+    timestamps: true
+});
 
 const Task = mongoose.model<ITask>("Task", TaskSchema);
 export default Task;

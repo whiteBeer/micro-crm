@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import type { ActionContext } from 'vuex';
 import type { Client, ClientState, ClientInput } from '@/types/clients';
 import type { RootState } from '@/types';
@@ -10,12 +10,22 @@ export default {
     namespaced: true,
     state: {
         clients: [],
+        total: 0,
+        skip: 0,
+        limit: 5,
+        search: '',
         loading: false,
         error: null
     } as ClientState,
     mutations: {
         SET_CLIENTS(state: ClientState, clients: Client[]) {
             state.clients = clients;
+        },
+        SET_TOTAL(state: ClientState, totalClients: number) {
+            state.total = totalClients;
+        },
+        SET_SEARCH(state: ClientState, search: string) {
+            state.search = search;
         },
         ADD_CLIENT(state: ClientState, client: Client) {
             state.clients = [client].concat(state.clients);
@@ -32,6 +42,12 @@ export default {
         SET_LOADING(state: ClientState, loading: boolean) {
             state.loading = loading;
         },
+        SET_SKIP(state: ClientState, skip: number) {
+            state.skip = skip;
+        },
+        SET_LIMIT(state: ClientState, limit: number) {
+            state.limit = limit;
+        },
         SET_ERROR(state: ClientState, error: string | null) {
             state.error = error;
         },
@@ -45,16 +61,22 @@ export default {
             commit('CLEAR_ERROR');
             const token = rootState.user.token;
             try {
-                const response = await axios.get(`${backendUrl}/clients`, {
+                const limit = rootState.clients.limit;
+                const skip = rootState.clients.skip;
+                const search = rootState.clients.search;
+                const url = `${backendUrl}/clients?limit=${limit}&skip=${skip}&search=${search}`;
+                const response = await axios.get(url, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                commit('SET_CLIENTS', response.data);
+                commit('SET_CLIENTS', response.data.clients);
+                commit('SET_TOTAL', response.data.total);
                 commit('SET_LOADING', false);
                 return response;
-            } catch (error: any) {
-                commit('SET_ERROR', error.response?.data?.msg || 'Ошибка при загрузке клиентов');
+            } catch (err:unknown) {
+                const error = err as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
                 commit('SET_LOADING', false);
             }
         },
@@ -70,10 +92,12 @@ export default {
                     }
                 });
                 commit('ADD_CLIENT', response.data.client);
+                commit('SET_TOTAL', rootState.clients.total + 1);
                 commit('SET_LOADING', false);
                 return response;
-            } catch (error: any) {
-                commit('SET_ERROR', error.response?.data?.msg || 'Ошибка');
+            } catch (err:unknown) {
+                const error = err as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
                 commit('SET_LOADING', false);
             }
         },
@@ -91,8 +115,9 @@ export default {
                 commit('UPDATE_CLIENT', clientData);
                 commit('SET_LOADING', false);
                 return response;
-            } catch (error: any) {
-                commit('SET_ERROR', error.response?.data?.msg || 'Ошибка');
+            } catch (err:unknown) {
+                const error = err as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
                 commit('SET_LOADING', false);
             }
         },
@@ -108,16 +133,20 @@ export default {
                     }
                 });
                 commit('DELETE_CLIENT', clientId);
+                commit('SET_TOTAL', rootState.clients.total - 1);
                 commit('SET_LOADING', false);
                 return response;
-            } catch (error: any) {
-                commit('SET_ERROR', error.response?.data?.msg || 'Ошибка при создании клиента');
+            } catch (err:unknown) {
+                const error = err as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
                 commit('SET_LOADING', false);
             }
         }
     },
     getters: {
         allClients: (state: ClientState) => state.clients,
+        limit: (state: ClientState) => state.limit,
+        total: (state: ClientState) => state.total,
         isLoading: (state: ClientState) => state.loading,
         error: (state: ClientState) => state.error
     }

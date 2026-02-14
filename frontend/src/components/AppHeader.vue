@@ -10,7 +10,8 @@ const router = useRouter();
 
 const logout = () => {
     store.dispatch('user/logout');
-    router.push('/login');
+    drawer.value = false;
+    router.push('/');
 };
 
 </script>
@@ -24,7 +25,9 @@ const logout = () => {
         dark
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>Micro CRM</v-toolbar-title>
+      <v-toolbar-title>
+        <router-link to="/" class="white--text text-decoration-none">Micro CRM</router-link>
+      </v-toolbar-title>
     </v-app-bar>
     <v-navigation-drawer
         v-model="drawer"
@@ -59,6 +62,16 @@ const logout = () => {
         <v-list-item v-if="currentUser" value="board" to="/">
           <v-list-item-content>
             <v-list-item-title>Доска задач</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="currentUser" value="board" to="/clients">
+          <v-list-item-content>
+              <v-list-item-title>Клиенты</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="currentUser" value="board" to="/tasks">
+          <v-list-item-content>
+              <v-list-item-title>Задачи</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-if="currentUser" value="profile" to="/profile-edit" color="primary">
