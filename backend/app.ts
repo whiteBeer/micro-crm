@@ -27,7 +27,10 @@ const app = express();
 app.use(rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.json());
 app.use(helmet());
-app.use(cors({origin: true}));
+app.use(cors({
+    origin: process.env.FRONTEND_URL || true,
+    credentials: true
+}));
 app.use(xss());
 
 app.use("/api/swagger", swaggerUI.serve, swaggerUI.setup(swaggerDocument));

@@ -48,7 +48,8 @@ const save = async () => {
     if (dataForBackend._id) {
         success = await store.dispatch('clients/updateClient', dataForBackend);
     } else {
-        success = await store.dispatch('clients/createClient', dataForBackend);
+        const {_id, ...dataForBackendWithoutId} = dataForBackend;
+        success = await store.dispatch('clients/createClient', dataForBackendWithoutId);
     }
     if (success) {
         close();

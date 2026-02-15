@@ -9,10 +9,15 @@ import {
     deleteClient
 } from "../controllers/clients";
 
-router.route("/").get(getClients);
-router.route("/:id").get(getClient);
+import {
+    listClientsAccessControl,
+    oneClientAccessControl
+} from "../middleware/access-control/clients";
+
+router.route("/").get(listClientsAccessControl, getClients);
+router.route("/:id").get(oneClientAccessControl, getClient);
 router.route("/").post(createClient);
-router.route("/:id").put(updateClient);
-router.route("/:id").delete(deleteClient);
+router.route("/:id").put(oneClientAccessControl, updateClient);
+router.route("/:id").delete(oneClientAccessControl, deleteClient);
 
 export default router;

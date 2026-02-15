@@ -6,6 +6,7 @@ import { BadRequestError, NotFoundError } from "../errors";
 export const getClients = async (req: Request, res: Response) => {
     const managerId = req.user?._id;
     const search:string = ((req.query.search as string) || "").replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "");
+    const selection:string = ((req.query.selection as string) || "");
 
     if (!managerId) {
         throw new BadRequestError("User is not authenticated");
@@ -18,13 +19,20 @@ export const getClients = async (req: Request, res: Response) => {
             { phone: {$regex: search, $options: "i"} }
         ]
     } : {};
+    const selectionFilter =  selection === "all" ? {} : {managerId};
 
-    let result = Client.find(filter);
+    let result = Client.find({
+        ...filter,
+        ...selectionFilter
+    });
     const skip = Number(req.query.skip) || 0;
     const limit = Number(req.query.limit) || 10;
 
     result = result.sort("-createdAt").skip(skip).limit(limit);
-    const total = await Client.countDocuments(filter);
+    const total = await Client.countDocuments({
+        ...filter,
+        ...selectionFilter
+    });
     const clients = await result;
 
     res.status(StatusCodes.OK).json({

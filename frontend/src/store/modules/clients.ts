@@ -56,7 +56,7 @@ export default {
         }
     },
     actions: {
-        async fetchClients({ commit, rootState }: ClientContext) {
+        async fetchClients({ commit, rootState }: ClientContext, selection: string) {
             commit('SET_LOADING', true);
             commit('CLEAR_ERROR');
             const token = rootState.user.token;
@@ -64,7 +64,7 @@ export default {
                 const limit = rootState.clients.limit;
                 const skip = rootState.clients.skip;
                 const search = rootState.clients.search;
-                const url = `${backendUrl}/clients?limit=${limit}&skip=${skip}&search=${search}`;
+                const url = `${backendUrl}/clients?limit=${limit}&skip=${skip}&search=${search}&selection=${selection}`;
                 const response = await axios.get(url, {
                     headers: {
                         Authorization: `Bearer ${token}`

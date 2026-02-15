@@ -61,7 +61,7 @@ const logout = () => {
         </v-list-item>
         <v-list-item v-if="currentUser" value="board" to="/">
           <v-list-item-content>
-            <v-list-item-title>Доска задач</v-list-item-title>
+            <v-list-item-title>Обзорная доска</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-if="currentUser" value="board" to="/clients">

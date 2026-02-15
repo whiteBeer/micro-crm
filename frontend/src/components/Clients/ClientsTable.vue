@@ -9,6 +9,10 @@ interface ITableOptions {
     itemsPerPage: number;
 }
 
+const props = defineProps<{
+    selection: string;
+}>();
+
 const search = ref('');
 const dialog = ref(false);
 const headers = [
@@ -23,7 +27,8 @@ const clients = computed(() => store.getters['clients/allClients']);
 const total = computed(() => store.getters['clients/total']);
 const limit = computed(() => store.getters['clients/limit']);
 const loading = computed(() => store.getters['clients/isLoading']);
-const options = ref<ITableOptions>({page: 1, itemsPerPage: limit.value});
+const error = computed(() => store.getters['clients/error']);
+const options = ref<ITableOptions>({page: 1, itemsPerPage: 0});
 
 const editedItem = ref<Client | null>(null);
 
@@ -42,7 +47,7 @@ const deleteClient = async (item:Client) => {
 };
 
 // TODO: make debounce in common way
-let timeout:number;
+let timeout: any;
 watch(search, async (val: string) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
@@ -51,27 +56,41 @@ watch(search, async (val: string) => {
         if (options.value.page !== 1) {
             options.value = { ...options.value, page: 1 };
         } else {
-            store.dispatch('clients/fetchClients');
+            store.dispatch('clients/fetchClients', props.selection);
         }
     }, 500);
 });
 
-watch(options, async (newOptions:ITableOptions) => {
+watch(options, async (newOptions:ITableOptions, oldOptions:ITableOptions) => {
     const { page, itemsPerPage } = newOptions;
-    if (page && itemsPerPage) {
+    if (page !== oldOptions.page || itemsPerPage !== oldOptions.itemsPerPage) {
         const skip = (page - 1) * itemsPerPage;
         store.commit('clients/SET_LIMIT', itemsPerPage);
         store.commit('clients/SET_SKIP', skip);
-        await store.dispatch('clients/fetchClients');
+        await store.dispatch('clients/fetchClients', props.selection);
     }
-}, { deep: false });
+});
+
+watch(() => props.selection, async () => {
+    store.commit('clients/SET_CLIENTS', []);
+    store.commit('clients/SET_LOADING', true);
+    store.commit('clients/SET_SKIP', 0);
+    if (options.value.page !== 1) {
+        options.value = { ...options.value, page: 1 };
+    }
+    await store.dispatch('clients/fetchClients', props.selection);
+});
+
+options.value = {page: 1, itemsPerPage: limit.value};
+
 </script>
 
 <template>
   <v-container>
     <v-row class="mb-4">
       <v-col cols="12" sm="6">
-        <v-btn color="primary" @click="addClient">
+        <v-btn :disabled="error === 'access_denied'"
+               color="primary" @click="addClient">
           <v-icon left>mdi-plus</v-icon>
           Добавить клиента
         </v-btn>
@@ -83,6 +102,7 @@ watch(options, async (newOptions:ITableOptions) => {
 
       <v-col cols="12" sm="6">
         <v-text-field
+          :disabled="error === 'access_denied'"
           v-model="search"
           append-icon="mdi-magnify"
           label="Поиск"
@@ -92,10 +112,12 @@ watch(options, async (newOptions:ITableOptions) => {
       </v-col>
     </v-row>
 
+    <v-alert v-if="error === 'access_denied'" type="error" dense text class="mb-4">
+        {{ error }}
+    </v-alert>
     <v-data-table
       :headers="headers"
       :items="clients"
-      :search="search"
       :server-items-length="total"
       :options.sync="options"
       :loading="loading"
@@ -104,6 +126,7 @@ watch(options, async (newOptions:ITableOptions) => {
           'items-per-page-text': 'Клиентов на странице'
       }"
       :items-per-page="limit"
+      v-if="error !== 'access_denied'"
       class="elevation-1"
     >
       <template v-slot:item.actions="{ item }">
