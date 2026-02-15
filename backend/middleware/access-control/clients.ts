@@ -22,7 +22,16 @@ export const oneClientAccessControl = async (req: Request, res: Response, next: 
 
     if (!client) {
         throw new NotFoundError("client_not_found");
-    } else if (client.managerId !== user?._id && user?.role !== "admin") {
+    } else if (!client.managerId.equals(user?._id) && user?.role !== "admin") {
+        throw new ForbiddenError("access_denied");
+    }
+    next();
+};
+
+export const deleteClientAccessControl = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    if (user?.role !== "admin") {
         throw new ForbiddenError("access_denied");
     }
     next();

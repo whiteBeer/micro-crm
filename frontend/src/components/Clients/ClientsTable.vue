@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import ClientModal from './ClientModal.vue';
+import ClientsTableControl from './ClientsTableControl.vue';
 import store from '@/store';
 import type {Client} from '@/types/clients';
 
@@ -13,7 +14,6 @@ const props = defineProps<{
     selection: string;
 }>();
 
-const search = ref('');
 const dialog = ref(false);
 const headers = [
     { text: 'Имя', value: 'name', sortable: false },
@@ -28,7 +28,7 @@ const total = computed(() => store.getters['clients/total']);
 const limit = computed(() => store.getters['clients/limit']);
 const loading = computed(() => store.getters['clients/isLoading']);
 const error = computed(() => store.getters['clients/error']);
-const options = ref<ITableOptions>({page: 1, itemsPerPage: 0});
+const options = ref<ITableOptions>({page: 1, itemsPerPage: limit.value});
 
 const editedItem = ref<Client | null>(null);
 
@@ -42,24 +42,19 @@ const editClient = (item:Client) => {
     dialog.value = true;
 };
 
+const resetStoreAndFetch = async () => {
+    store.commit('clients/SET_CLIENTS', []);
+    store.commit('clients/SET_LOADING', true);
+    store.commit('clients/SET_SKIP', 0);
+    if (options.value.page !== 1) {
+        options.value = { ...options.value, page: 1 };
+    }
+    await store.dispatch('clients/fetchClients', props.selection);
+};
+
 const deleteClient = async (item:Client) => {
     await store.dispatch('clients/deleteClient', item._id);
 };
-
-// TODO: make debounce in common way
-let timeout: any;
-watch(search, async (val: string) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        store.commit('clients/SET_SEARCH', val);
-        store.commit('clients/SET_SKIP', 0);
-        if (options.value.page !== 1) {
-            options.value = { ...options.value, page: 1 };
-        } else {
-            store.dispatch('clients/fetchClients', props.selection);
-        }
-    }, 500);
-});
 
 watch(options, async (newOptions:ITableOptions, oldOptions:ITableOptions) => {
     const { page, itemsPerPage } = newOptions;
@@ -71,46 +66,23 @@ watch(options, async (newOptions:ITableOptions, oldOptions:ITableOptions) => {
     }
 });
 
-watch(() => props.selection, async () => {
-    store.commit('clients/SET_CLIENTS', []);
-    store.commit('clients/SET_LOADING', true);
-    store.commit('clients/SET_SKIP', 0);
-    if (options.value.page !== 1) {
-        options.value = { ...options.value, page: 1 };
-    }
-    await store.dispatch('clients/fetchClients', props.selection);
-});
+watch(() => props.selection, resetStoreAndFetch);
 
-options.value = {page: 1, itemsPerPage: limit.value};
+resetStoreAndFetch();
 
 </script>
 
 <template>
   <v-container>
-    <v-row class="mb-4">
-      <v-col cols="12" sm="6">
-        <v-btn :disabled="error === 'access_denied'"
-               color="primary" @click="addClient">
-          <v-icon left>mdi-plus</v-icon>
-          Добавить клиента
-        </v-btn>
-      </v-col>
+    <ClientsTableControl
+        :selection="props.selection"
+        :resetPage="resetStoreAndFetch"
+        @onAddClient="addClient"
+    />
 
-      <ClientModal :open="dialog"
-                   @close="dialog = false"
-                   :editedItem="editedItem" />
-
-      <v-col cols="12" sm="6">
-        <v-text-field
-          :disabled="error === 'access_denied'"
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Поиск"
-          single-line
-          hide-details
-        ></v-text-field>
-      </v-col>
-    </v-row>
+    <ClientModal :open="dialog"
+                 @close="dialog = false"
+                 :editedItem="editedItem" />
 
     <v-alert v-if="error === 'access_denied'" type="error" dense text class="mb-4">
         {{ error }}
@@ -137,6 +109,7 @@ options.value = {page: 1, itemsPerPage: limit.value};
         >
           mdi-pencil
         </v-icon>
+        <!--  //TODO  in real system hide delete button for users without permission to delete client -->
         <v-icon
           small
           @click="deleteClient(item)"

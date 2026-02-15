@@ -30,6 +30,7 @@ const UserSchema = new mongoose.Schema<IUser>({
             "incorrect_password"
         ]
     },
+    //TODO: in real system it should be linked to Role-Permission models
     role: {
         type: String,
         required: true,
