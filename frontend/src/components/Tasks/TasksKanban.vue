@@ -7,7 +7,7 @@ import draggable from 'vuedraggable';
 import store from '@/store';
 import type { Task } from '@/types/tasks';
 import {getStatusColor} from './util/getStatusColor';
-import type {DraggableChangeEvent} from '@/types';
+import type {DraggableChangeEvent} from '@/types/tasks';
 
 const props = defineProps<{
     selection: string;
@@ -121,7 +121,7 @@ watch(currentUser, (newUser) => {
               <draggable
                 v-model="columns[status]"
                 group="tasks"
-                @change="(e) => onTaskDrop(e, status)"
+                @change="onTaskDrop($event, status)"
                 :animation="100"
                 ghost-class="ghost-card"
               >

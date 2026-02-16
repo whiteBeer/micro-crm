@@ -42,8 +42,8 @@ const fetchRecent = async () => {
 
 watch(() => props.selection, fetchRecent, { immediate: true });
 
-const formatDate = (date: string) => {
-    return new Date(date).toLocaleString('ru-RU');
+const formatDate = (date?: string) => {
+    return date ? new Date(date).toLocaleString('ru-RU') : '';
 };
 </script>
 

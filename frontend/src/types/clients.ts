@@ -7,8 +7,8 @@ export interface Client {
     notes: string | null;
     status: 'active' | 'inactive' | 'lead';
     managerId: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface ClientState {

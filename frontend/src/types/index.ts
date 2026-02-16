@@ -7,9 +7,3 @@ export interface RootState {
     clients: ClientState;
     tasks: TaskState;
 }
-
-export interface DraggableChangeEvent {
-    added?: {
-        element: Task;
-    };
-}

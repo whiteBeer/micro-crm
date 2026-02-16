@@ -10,8 +10,8 @@ export interface Task {
         name?: string
     };
     assigneeId: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface TaskEdit extends Task {
@@ -34,4 +34,20 @@ export interface TaskInput {
     status: 'pending' | 'in_progress' | 'completed';
     priority: 'low' | 'medium' | 'high';
     dueDate?: string;
+}
+
+export interface DraggableChangeEvent {
+    added?: {
+        element: Task;
+        newIndex: number;
+    };
+    removed?: {
+        element: Task;
+        oldIndex: number;
+    };
+    moved?: {
+        element: Task;
+        newIndex: number;
+        oldIndex: number;
+    };
 }
