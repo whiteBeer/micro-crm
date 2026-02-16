@@ -4,6 +4,8 @@ import TaskModal from './TaskModal.vue';
 import TasksTableControl from './TasksTableControl.vue';
 import store from '@/store';
 import type { Task } from '@/types/tasks';
+import {getPriorityColor} from './util/getPriorityColor';
+import {getStatusColor} from './util/getStatusColor';
 
 interface ITableOptions {
     page: number;
@@ -80,15 +82,6 @@ watch(currentUser, (newUser) => {
         resetStoreAndFetch();
     }
 }, { immediate: true });
-
-const getStatusColor = (status: string) => {
-    switch (status) {
-        case 'pending': return 'orange';
-        case 'in_progress': return 'blue';
-        case 'completed': return 'green';
-        default: return 'grey';
-    }
-};
 </script>
 
 <template>
@@ -123,6 +116,11 @@ const getStatusColor = (status: string) => {
       <template v-slot:item.status="{ item }">
         <v-chip :color="getStatusColor(item.status)" dark small>
           {{ item.status }}
+        </v-chip>
+      </template>
+      <template v-slot:item.priority="{ item }">
+        <v-chip :color="getPriorityColor(item.priority)" dark small>
+          {{ item.priority }}
         </v-chip>
       </template>
       <template v-slot:item.actions="{ item }">
