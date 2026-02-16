@@ -80,7 +80,7 @@ watch(currentUser, (newUser) => {
 </script>
 
 <template>
-  <v-container>
+  <div  class="pa-3">
     <ClientsTableControl
       :selection="props.selection"
       :resetPage="resetStoreAndFetch"
@@ -125,7 +125,7 @@ watch(currentUser, (newUser) => {
         </v-icon>
       </template>
     </v-data-table>
-  </v-container>
+  </div>
 </template>
 
 <style scoped>

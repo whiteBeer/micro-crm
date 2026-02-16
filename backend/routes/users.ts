@@ -7,6 +7,6 @@ import {
 } from "../controllers/users";
 
 router.route("/me").get(getUser);
-router.route("/:id").put(updateUser);
+router.route("/profile").put(updateUser);
 
 export default router;

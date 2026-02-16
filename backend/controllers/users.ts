@@ -22,9 +22,7 @@ const getUser = async (req: Request, res: Response) => {
 };
 
 const updateUser = async (req: Request, res: Response) => {
-    const {
-        id: userId
-    } = req.params;
+    const userId = req.user?._id;
 
     const existingUser = await User.findOne({ _id: userId });
 
@@ -34,12 +32,12 @@ const updateUser = async (req: Request, res: Response) => {
 
     const updatedUser = await User.findOneAndUpdate(
         { _id: userId},
-        existingUser,
+        req.body,
         { new: true, runValidators: true }
     );
 
     res.status(StatusCodes.OK).json({
-        isStatusUpdated: updatedUser && updatedUser.status !== existingUser.status
+        updatedUser: updatedUser
     });
 };
 

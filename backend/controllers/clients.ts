@@ -64,7 +64,6 @@ export const updateClient = async (req: Request, res: Response) => {
     const {
         params: { id: clientId }
     } = req;
-    const userId = req.user?._id;
 
     const updatedClient = await Client.findOneAndUpdate(
         { _id: clientId },

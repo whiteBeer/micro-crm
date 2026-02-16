@@ -72,6 +72,27 @@ export default {
             }
         },
 
+        async updateUser({ commit, state }: UserContext, userData: Partial<User>) {
+            commit('SET_LOADING', true);
+            commit('CLEAR_ERROR');
+            const backendUrl = import.meta.env.VITE_BACKEND_URL;
+            try {
+                const response = await axios.put(`${backendUrl}/users/profile`, userData, {
+                    headers: {
+                        Authorization: `Bearer ${state.token}`
+                    }
+                });
+                commit('SET_USER', response.data.user);
+                commit('SET_LOADING', false);
+                return true;
+            } catch (e:unknown) {
+                const error = e as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_LOADING', false);
+                return false;
+            }
+        },
+
         async fetchUser({ commit, state }: UserContext) {
             if (!state.token) {
                 return;
