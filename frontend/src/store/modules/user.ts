@@ -101,6 +101,7 @@ export default {
     },
     getters: {
         isAuthenticated: (state: UserState) => !!state.token,
+        isAdmin: (state: UserState) => state.user?.role === 'admin',
         currentUser: (state: UserState) => state.user,
         authError: (state: UserState) => state.error,
         isLoading: (state: UserState) => state.loading

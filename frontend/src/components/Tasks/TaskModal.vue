@@ -12,6 +12,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['close']);
 
+const isAdmin = computed(() => store.getters['user/isAdmin']);
+
 const defaultItem: Task = {
     title: '',
     description: '',
@@ -72,8 +74,9 @@ const fetchClients = async (search = '') => {
     loadingClients.value = true;
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const token = store.state.user?.token;
+    const selection = isAdmin.value ? 'all' : 'my';
     try {
-        const response = await axios.get(`${backendUrl}/clients?selection=my&limit=5&search=${search}`, {
+        const response = await axios.get(`${backendUrl}/clients?selection=${selection}&limit=5&search=${search}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
