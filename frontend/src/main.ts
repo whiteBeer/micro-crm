@@ -27,6 +27,9 @@ axios.interceptors.response.use(
                 color: 'error'
             });
         }
+        if (error.response && error.response.status === 405) {
+            store.dispatch('user/logout');
+        }
         return Promise.reject(error);
     }
 );

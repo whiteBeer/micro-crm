@@ -14,7 +14,7 @@ const register = async (req: Request, res: Response) => {
     if (!name || !email || !password) {
         throw new BadRequestError("Please provide name, email, and password");
     }
-    const role = req.body.role || "manager"
+    const role = req.body.role || "manager";
     const avatar = req.body.avatar || "default_avatar.jpg";
 
     try {
@@ -27,7 +27,7 @@ const register = async (req: Request, res: Response) => {
     } catch (err:unknown) {
         const knownError = err as IErrorMongoose;
         if (knownError.code === 11000) {
-            throw new BadRequestError("Email already exists");
+            throw new BadRequestError("email_already_exists");
         } else {
             throw err;
         }

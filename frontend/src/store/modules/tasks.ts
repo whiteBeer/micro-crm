@@ -131,6 +131,24 @@ export default {
             }
         },
 
+        async updateTaskStatus({ commit, rootState }: TaskContext, { taskId, status }: { taskId: string, status: string }) {
+            commit('CLEAR_ERROR');
+            const token = rootState.user.token;
+            try {
+                const response = await axios.patch(`${backendUrl}/tasks/${taskId}/status`, { status }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                commit('UPDATE_TASK', response.data.updatedTask);
+                return response;
+            } catch (err:unknown) {
+                const error = err as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                return null;
+            }
+        },
+
         async deleteTask({ commit, rootState }: TaskContext, taskId: string) {
             commit('SET_LOADING', true);
             commit('CLEAR_ERROR');

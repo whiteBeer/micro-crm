@@ -1,9 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import LoginView from '../views/LoginView.vue';
-import RegisterView from '../views/RegisterView.vue';
-import ClientsView from '../views/ClientsView.vue';
 
 Vue.use(VueRouter);
 
@@ -13,22 +9,22 @@ const router = new VueRouter({
     routes: [{
         path: '/',
         name: 'home',
-        component: HomeView
+        component: () => import('../views/HomeView.vue')
     },
     {
         path: '/login',
         name: 'login',
-        component: LoginView
+        component: () => import('../views/LoginView.vue')
     },
     {
         path: '/register',
         name: 'register',
-        component: RegisterView
+        component: () => import('../views/RegisterView.vue')
     },
     {
         path: '/clients',
         name: 'clients',
-        component: ClientsView
+        component: () => import('../views/ClientsView.vue')
     },
     {
         path: '/tasks',

@@ -3,9 +3,11 @@ import { ref, computed, watch } from 'vue';
 import TaskModal from './TaskModal.vue';
 import TasksTableControl from './TasksTableControl.vue';
 import TasksKanbanItem from './TasksKanbanItem.vue';
+import draggable from 'vuedraggable';
 import store from '@/store';
 import type { Task } from '@/types/tasks';
 import {getStatusColor} from './util/getStatusColor';
+import type {DraggableChangeEvent} from '@/types';
 
 const props = defineProps<{
     selection: string;
@@ -21,8 +23,34 @@ const currentUser = computed(() => store.getters['user/currentUser']);
 
 const statuses = ['pending', 'in_progress', 'completed'];
 
-const getTasksByStatus = (status: string) => {
-    return tasks.value.filter((t: Task) => t.status === status);
+const columns = ref<Record<string, Task[]>>({
+    pending: [],
+    in_progress: [],
+    completed: []
+});
+
+const fillColumns = (newTasks:Task[]) => {
+    columns.value = {
+        pending: newTasks.filter(t => t.status === 'pending'),
+        in_progress: newTasks.filter(t => t.status === 'in_progress'),
+        completed: newTasks.filter(t => t.status === 'completed')
+    };
+};
+
+watch(tasks, fillColumns, { immediate: true });
+
+const onTaskDrop = async (event: DraggableChangeEvent, newStatus: string) => {
+    if (event.added) {
+        const task = event.added.element;
+        const success = await store.dispatch('tasks/updateTaskStatus', {
+            taskId: task._id,
+            status: newStatus
+        });
+
+        if (!success) {
+            fillColumns(tasks.value);
+        }
+    }
 };
 
 const addTask = () => {
@@ -90,13 +118,21 @@ watch(currentUser, (newUser) => {
               <v-progress-circular indeterminate color="primary"></v-progress-circular>
             </div>
             <div v-if="!loading">
-              <TasksKanbanItem
-                v-for="task in getTasksByStatus(status)"
-                :key="task._id"
-                :task="task"
-                @edit="editTask"
-                @delete="deleteTask"
-              />
+              <draggable
+                v-model="columns[status]"
+                group="tasks"
+                @change="(e) => onTaskDrop(e, status)"
+                :animation="100"
+                ghost-class="ghost-card"
+              >
+                <TasksKanbanItem
+                  v-for="task in columns[status]"
+                  :key="task._id"
+                  :task="task"
+                  @edit="editTask"
+                  @delete="deleteTask"
+                />
+              </draggable>
             </div>
           </v-card-text>
         </v-card>
@@ -104,3 +140,9 @@ watch(currentUser, (newUser) => {
     </v-row>
   </v-container>
 </template>
+
+<style scoped>
+.ghost-card {
+  opacity: 0.5;
+}
+</style>

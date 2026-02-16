@@ -20,7 +20,7 @@ router.route("/").get(listTasksAccessControl, getTasks);
 router.route("/:id").get(oneTaskAccessControl, getTask);
 router.route("/").post(createTask);
 router.route("/:id").put(oneTaskAccessControl, updateTask);
-router.route("/:id/status").put(oneTaskAccessControl, updateTaskStatus);
+router.route("/:id/status").patch(oneTaskAccessControl, updateTaskStatus);
 router.route("/:id").delete(deleteTaskAccessControl, deleteTask);
 
 export default router;

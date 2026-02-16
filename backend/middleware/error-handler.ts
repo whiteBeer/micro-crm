@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import BaseError from "../errors/base-error";
 import mongoose from "mongoose";
+import {JsonWebTokenError} from "jsonwebtoken";
 
 const errorHandlerMiddleware = (
     err: BaseError | mongoose.Error | unknown,
@@ -38,6 +39,9 @@ const errorHandlerMiddleware = (
     } else if (err instanceof mongoose.Error.CastError) {
         customError.msg = "cast_error";
         customError.statusCode = 400;
+    } else if (err instanceof JsonWebTokenError) {
+        customError.msg = "jwt_error";
+        customError.statusCode = 405;
     }
 
     return res.status(customError.statusCode).json({ msg: customError.msg });

@@ -61,7 +61,16 @@ export default {
             commit('SET_LOADING', true);
             const backendUrl = import.meta.env.VITE_BACKEND_URL;
             try {
-                await axios.post(`${backendUrl}/auth/register`, userData);
+                const response = await axios.post(`${backendUrl}/auth/register`, userData);
+
+                const token = response.data.token;
+                const user = response.data.user;
+
+                localStorage.setItem('token', token);
+
+                commit('SET_TOKEN', token);
+                commit('SET_USER', user);
+
                 commit('SET_LOADING', false);
                 return true;
             } catch (e:unknown) {
