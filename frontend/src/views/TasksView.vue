@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppNavTabs from '@/components/AppNavTabs.vue';
+import TasksContainer from '@/components/Tasks/TasksContainer.vue';
 </script>
 
 <template>
@@ -9,9 +10,7 @@ import AppNavTabs from '@/components/AppNavTabs.vue';
                 <AppNavTabs />
             </v-col>
             <v-col cols="12" md="10">
-                <main class="page-cont">
-                    Tasks
-                </main>
+                <TasksContainer />
             </v-col>
         </v-row>
     </v-container>

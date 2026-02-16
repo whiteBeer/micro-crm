@@ -53,7 +53,9 @@ const resetStoreAndFetch = async () => {
 };
 
 const deleteClient = async (item:Client) => {
-    await store.dispatch('clients/deleteClient', item._id);
+    if (confirm('Вы уверены, что хотите удалить клиента?')) {
+        await store.dispatch('clients/deleteClient', item._id);
+    }
 };
 
 watch(options, async (newOptions:ITableOptions, oldOptions:ITableOptions) => {

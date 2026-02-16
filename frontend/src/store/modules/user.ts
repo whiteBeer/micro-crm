@@ -87,7 +87,6 @@ export default {
             } catch (e) {
                 commit('SET_USER', null);
                 commit('SET_TOKEN', '');
-                localStorage.removeItem('token');
             }
         },
 
@@ -95,6 +94,9 @@ export default {
             localStorage.removeItem('token');
             commit('SET_TOKEN', '');
             commit('SET_USER', null);
+
+            commit('clients/SET_DEFAULT_STATE', null, { root: true });
+            commit('tasks/SET_DEFAULT_STATE', null, { root: true });
         }
     },
     getters: {

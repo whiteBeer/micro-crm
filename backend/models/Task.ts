@@ -31,7 +31,7 @@ const TaskSchema = new mongoose.Schema<ITask>({
     },
     clientId: {
         type: Types.ObjectId,
-        required: true
+        required: [true, "client_id_required"]
     },
     assigneeId: {
         type: Types.ObjectId,

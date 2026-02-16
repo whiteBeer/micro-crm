@@ -1,13 +1,14 @@
 import axios, { AxiosError } from 'axios';
 import type { ActionContext } from 'vuex';
-import type { Client, ClientState, ClientInput } from '@/types/clients';
+import type {Task, TaskState, TaskInput, TaskEdit} from '@/types/tasks';
 import type { RootState } from '@/types';
+import type {ClientState} from '@/types/clients';
 
-type ClientContext = ActionContext<ClientState, RootState>;
+type TaskContext = ActionContext<TaskState, RootState>;
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const defaultState:ClientState = {
-    clients: [],
+const defaultState:TaskState = {
+    tasks: [],
     total: 0,
     skip: 0,
     limit: 5,
@@ -23,59 +24,59 @@ export default {
         SET_DEFAULT_STATE(state: ClientState) {
             Object.assign(state, defaultState);
         },
-        SET_CLIENTS(state: ClientState, clients: Client[]) {
-            state.clients = clients;
+        SET_TASKS(state: TaskState, tasks: Task[]) {
+            state.tasks = tasks;
         },
-        SET_TOTAL(state: ClientState, totalClients: number) {
-            state.total = totalClients;
+        SET_TOTAL(state: TaskState, total: number) {
+            state.total = total;
         },
-        SET_SEARCH(state: ClientState, search: string) {
+        SET_SEARCH(state: TaskState, search: string) {
             state.search = search;
         },
-        ADD_CLIENT(state: ClientState, client: Client) {
-            state.clients = [client].concat(state.clients);
+        ADD_TASK(state: TaskState, task: Task) {
+            state.tasks = [task].concat(state.tasks);
         },
-        UPDATE_CLIENT(state: ClientState, client: Client) {
-            state.clients = state.clients.map(item => item._id === client._id ? {
+        UPDATE_TASK(state: TaskState, task: Task) {
+            state.tasks = state.tasks.map(item => item._id === task._id ? {
                 ...item,
-                ...client
+                ...task
             } : item);
         },
-        DELETE_CLIENT(state: ClientState, clientId: string) {
-            state.clients = state.clients.filter(client => client._id !== clientId);
+        DELETE_TASK(state: TaskState, taskId: string) {
+            state.tasks = state.tasks.filter(task => task._id !== taskId);
         },
-        SET_LOADING(state: ClientState, loading: boolean) {
+        SET_LOADING(state: TaskState, loading: boolean) {
             state.loading = loading;
         },
-        SET_SKIP(state: ClientState, skip: number) {
+        SET_SKIP(state: TaskState, skip: number) {
             state.skip = skip;
         },
-        SET_LIMIT(state: ClientState, limit: number) {
+        SET_LIMIT(state: TaskState, limit: number) {
             state.limit = limit;
         },
-        SET_ERROR(state: ClientState, error: string | null) {
+        SET_ERROR(state: TaskState, error: string | null) {
             state.error = error;
         },
-        CLEAR_ERROR(state: ClientState) {
+        CLEAR_ERROR(state: TaskState) {
             state.error = null;
         }
     },
     actions: {
-        async fetchClients({ commit, rootState }: ClientContext, selection: string) {
+        async fetchTasks({ commit, rootState }: TaskContext, selection: string) {
             commit('SET_LOADING', true);
             commit('CLEAR_ERROR');
             const token = rootState.user.token;
             try {
-                const limit = rootState.clients.limit;
-                const skip = rootState.clients.skip;
-                const search = rootState.clients.search;
-                const url = `${backendUrl}/clients?limit=${limit}&skip=${skip}&search=${search}&selection=${selection}`;
+                const limit = rootState.tasks.limit;
+                const skip = rootState.tasks.skip;
+                const search = rootState.tasks.search;
+                const url = `${backendUrl}/tasks?limit=${limit}&skip=${skip}&search=${search}&selection=${selection}`;
                 const response = await axios.get(url, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                commit('SET_CLIENTS', response.data.clients);
+                commit('SET_TASKS', response.data.tasks);
                 commit('SET_TOTAL', response.data.total);
                 commit('SET_LOADING', false);
                 return response;
@@ -86,18 +87,21 @@ export default {
             }
         },
 
-        async createClient({ commit, rootState }: ClientContext, clientData: ClientInput) {
+        async createTask({ commit, rootState }: TaskContext, taskData: TaskEdit) {
             commit('SET_LOADING', true);
             commit('CLEAR_ERROR');
             const token = rootState.user.token;
             try {
-                const response = await axios.post(`${backendUrl}/clients`, clientData, {
+                const response = await axios.post(`${backendUrl}/tasks`, taskData, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                commit('ADD_CLIENT', response.data.client);
-                commit('SET_TOTAL', rootState.clients.total + 1);
+                commit('ADD_TASK', {
+                    ...response.data.task,
+                    client: taskData.client
+                });
+                commit('SET_TOTAL', rootState.tasks.total + 1);
                 commit('SET_LOADING', false);
                 return response;
             } catch (err:unknown) {
@@ -107,17 +111,17 @@ export default {
             }
         },
 
-        async updateClient({ commit, rootState }: ClientContext, clientData: Client) {
+        async updateTask({ commit, rootState }: TaskContext, taskData: Task) {
             commit('SET_LOADING', true);
             commit('CLEAR_ERROR');
             const token = rootState.user.token;
             try {
-                const response = await axios.put(`${backendUrl}/clients/${clientData._id}`, clientData, {
+                const response = await axios.put(`${backendUrl}/tasks/${taskData._id}`, taskData, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                commit('UPDATE_CLIENT', clientData);
+                commit('UPDATE_TASK', taskData);
                 commit('SET_LOADING', false);
                 return response;
             } catch (err:unknown) {
@@ -127,18 +131,18 @@ export default {
             }
         },
 
-        async deleteClient({ commit, rootState }: ClientContext, clientId: string) {
+        async deleteTask({ commit, rootState }: TaskContext, taskId: string) {
             commit('SET_LOADING', true);
             commit('CLEAR_ERROR');
             const token = rootState.user.token;
             try {
-                const response = await axios.delete(`${backendUrl}/clients/${clientId}`, {
+                const response = await axios.delete(`${backendUrl}/tasks/${taskId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                commit('DELETE_CLIENT', clientId);
-                commit('SET_TOTAL', rootState.clients.total - 1);
+                commit('DELETE_TASK', taskId);
+                commit('SET_TOTAL', rootState.tasks.total - 1);
                 commit('SET_LOADING', false);
                 return response;
             } catch (err:unknown) {
@@ -149,10 +153,10 @@ export default {
         }
     },
     getters: {
-        allClients: (state: ClientState) => state.clients,
-        limit: (state: ClientState) => state.limit,
-        total: (state: ClientState) => state.total,
-        isLoading: (state: ClientState) => state.loading,
-        error: (state: ClientState) => state.error
+        allTasks: (state: TaskState) => state.tasks,
+        limit: (state: TaskState) => state.limit,
+        total: (state: TaskState) => state.total,
+        isLoading: (state: TaskState) => state.loading,
+        error: (state: TaskState) => state.error
     }
 };

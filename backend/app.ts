@@ -16,6 +16,7 @@ import { handleShutdown } from "./handle-server-shutdown";
 import authRouter from "./routes/auth";
 import usersRouter from "./routes/users";
 import clientsRouter from "./routes/clients";
+import tasksRouter from "./routes/tasks";
 
 // Swagger
 import swaggerUI from "swagger-ui-express";
@@ -29,7 +30,9 @@ app.use(express.json());
 app.use(helmet());
 app.use(cors({
     origin: process.env.FRONTEND_URL || true,
-    credentials: true
+    credentials: true,
+    methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(xss());
 
@@ -42,6 +45,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", authenticationUser, usersRouter);
 app.use("/api/v1/clients", authenticationUser, clientsRouter);
+app.use("/api/v1/tasks", authenticationUser, tasksRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
