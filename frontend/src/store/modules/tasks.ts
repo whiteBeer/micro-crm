@@ -19,9 +19,9 @@ const defaultState:TaskState = {
 
 export default {
     namespaced: true,
-    state: defaultState,
+    state: {...defaultState},
     mutations: {
-        SET_DEFAULT_STATE(state: ClientState) {
+        SET_DEFAULT_STATE(state: TaskState) {
             Object.assign(state, defaultState);
         },
         SET_TASKS(state: TaskState, tasks: Task[]) {

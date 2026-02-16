@@ -18,7 +18,7 @@ const defaultState:ClientState = {
 
 export default {
     namespaced: true,
-    state: defaultState,
+    state: {...defaultState},
     mutations: {
         SET_DEFAULT_STATE(state: ClientState) {
             Object.assign(state, defaultState);

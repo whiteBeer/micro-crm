@@ -28,6 +28,7 @@ const total = computed(() => store.getters['clients/total']);
 const limit = computed(() => store.getters['clients/limit']);
 const loading = computed(() => store.getters['clients/isLoading']);
 const error = computed(() => store.getters['clients/error']);
+const currentUser = computed(() => store.getters['user/currentUser']);
 const options = ref<ITableOptions>({page: 1, itemsPerPage: limit.value});
 
 const editedItem = ref<Client | null>(null);
@@ -70,7 +71,11 @@ watch(options, async (newOptions:ITableOptions, oldOptions:ITableOptions) => {
 
 watch(() => props.selection, resetStoreAndFetch);
 
-resetStoreAndFetch();
+watch(currentUser, (newUser) => {
+    if (newUser) {
+        resetStoreAndFetch();
+    }
+}, { immediate: true });
 
 </script>
 

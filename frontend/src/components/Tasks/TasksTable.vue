@@ -22,7 +22,7 @@ const headers = [
     { text: 'Клиент', value: 'client.name', sortable: false },
     { text: 'Статус', value: 'status', sortable: false },
     { text: 'Приоритет', value: 'priority', sortable: false },
-    { text: 'Срок', value: 'dueDate', sortable: false },
+    { text: 'Завершить до', value: 'dueDate', sortable: false },
     { text: 'Действия', value: 'actions', sortable: false },
 ];
 const tasks = computed(() => store.getters['tasks/allTasks']);
@@ -52,9 +52,8 @@ const resetStoreAndFetch = async () => {
     store.commit('tasks/SET_SKIP', 0);
     if (options.value.page !== 1) {
         options.value = { ...options.value, page: 1 };
-    } else if (currentUser.value) {
-        await store.dispatch('tasks/fetchTasks', props.selection);
     }
+    await store.dispatch('tasks/fetchTasks', props.selection);
 };
 
 const deleteTask = async (item: Task) => {
@@ -69,16 +68,14 @@ watch(options, async (newOptions: ITableOptions, oldOptions: ITableOptions) => {
         const skip = (page - 1) * itemsPerPage;
         store.commit('tasks/SET_LIMIT', itemsPerPage);
         store.commit('tasks/SET_SKIP', skip);
-        if (currentUser.value) {
-            await store.dispatch('tasks/fetchTasks', props.selection);
-        }
+        await store.dispatch('tasks/fetchTasks', props.selection);
     }
 });
 
 watch(() => props.selection, resetStoreAndFetch);
 
 watch(currentUser, (newUser) => {
-    if (newUser && tasks.value.length === 0) {
+    if (newUser) {
         resetStoreAndFetch();
     }
 }, { immediate: true });

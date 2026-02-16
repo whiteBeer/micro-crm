@@ -22,12 +22,22 @@ const errorHandlerMiddleware = (
     } else if (err instanceof mongoose.Error.ValidationError) {
         if (err.name === "ValidationError") {
             try {
-                customError.msg = Object.values(err.errors)[0].message;
+                const error = Object.values(err.errors)[0];
+                if (error.name === "CastError") {
+                    customError.msg = "cast_error_" + error.path;
+                } else {
+                    customError.msg = error.message;
+                }
             } catch (e) {
                 customError.msg = "unknown_error";
             }
-            customError.statusCode = 400;
+        } else {
+            customError.msg = "validation_error";
         }
+        customError.statusCode = 400;
+    } else if (err instanceof mongoose.Error.CastError) {
+        customError.msg = "cast_error";
+        customError.statusCode = 400;
     }
 
     return res.status(customError.statusCode).json({ msg: customError.msg });

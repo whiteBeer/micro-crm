@@ -17,6 +17,7 @@ const activities = ref<{
     lastUpdatedTasks: []
 });
 const loading = ref(false);
+const error = ref('');
 
 //TODO: I do not like to put non interactive data to store
 const fetchRecent = async () => {
@@ -30,8 +31,10 @@ const fetchRecent = async () => {
             }
         });
         activities.value = response.data;
+        error.value = '';
     } catch (e) {
-        console.error(e);
+
+        error.value = 'server_error';
     } finally {
         loading.value = false;
     }
@@ -46,7 +49,7 @@ const formatDate = (date: string) => {
 
 <template>
   <v-container fluid class="pa-6 pt-0">
-    <v-row v-if="!loading">
+    <v-row v-if="!loading && !error">
       <v-col cols="12" md="6">
         <v-card class="fill-height">
           <v-card-title>Последние клиенты</v-card-title>

@@ -4,9 +4,9 @@ import mongoose, {Types} from "mongoose";
 const TaskSchema = new mongoose.Schema<ITask>({
     title: {
         type: String,
-        required: [true, "incorrect_name"],
-        minlength: [3, "incorrect_name"],
-        maxlength: [150, "incorrect_name"],
+        required: [true, "incorrect_task_name"],
+        minlength: [3, "incorrect_task_name"],
+        maxlength: [150, "incorrect_task_name"],
         index: true
     },
     description: {
