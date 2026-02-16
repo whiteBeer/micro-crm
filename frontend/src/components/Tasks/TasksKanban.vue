@@ -67,40 +67,40 @@ watch(currentUser, (newUser) => {
 <template>
   <v-container>
     <TasksTableControl
-        :selection="props.selection"
-        :resetPage="fetchTasks"
-        @onAddTask="addTask"
+      :selection="props.selection"
+      :resetPage="fetchTasks"
+      @onAddTask="addTask"
     />
     <TaskModal :open="dialog" @close="dialog = false" :editedItem="editedItem" />
 
     <v-alert v-if="error === 'access_denied'" type="error" dense text class="mb-4">
-        {{ error }}
+      {{ error }}
     </v-alert>
 
     <v-row v-if="error !== 'access_denied'">
-        <v-col cols="12" md="4" v-for="status in statuses" :key="status">
-            <v-card class="fill-height" color="grey lighten-4">
-                <v-card-title class="subtitle-1 font-weight-bold">
-                    <v-chip :color="getStatusColor(status)" dark small>
-                        {{ status }}
-                    </v-chip>
-                </v-card-title>
-                <v-card-text>
-                    <div v-if="loading" class="text-center pa-4">
-                        <v-progress-circular indeterminate color="primary"></v-progress-circular>
-                    </div>
-                    <div v-if="!loading">
-                        <TasksKanbanItem
-                            v-for="task in getTasksByStatus(status)"
-                            :key="task._id"
-                            :task="task"
-                            @edit="editTask"
-                            @delete="deleteTask"
-                        />
-                    </div>
-                </v-card-text>
-            </v-card>
-        </v-col>
+      <v-col cols="12" md="4" v-for="status in statuses" :key="status">
+        <v-card class="fill-height" color="grey lighten-4">
+          <v-card-title class="subtitle-1 font-weight-bold">
+            <v-chip :color="getStatusColor(status)" dark small>
+              {{ status }}
+            </v-chip>
+          </v-card-title>
+          <v-card-text>
+            <div v-if="loading" class="text-center pa-4">
+              <v-progress-circular indeterminate color="primary"></v-progress-circular>
+            </div>
+            <div v-if="!loading">
+              <TasksKanbanItem
+                v-for="task in getTasksByStatus(status)"
+                :key="task._id"
+                :task="task"
+                @edit="editTask"
+                @delete="deleteTask"
+              />
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>

@@ -17,6 +17,7 @@ import authRouter from "./routes/auth";
 import usersRouter from "./routes/users";
 import clientsRouter from "./routes/clients";
 import tasksRouter from "./routes/tasks";
+import dashboardRouter from "./routes/dashboard";
 
 // Swagger
 import swaggerUI from "swagger-ui-express";
@@ -25,7 +26,7 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 
 const app = express();
 
-app.use(rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(rateLimiter({ windowMs: 15 * 60 * 1000, limit: 10000 }));
 app.use(express.json());
 app.use(helmet());
 app.use(cors({
@@ -46,6 +47,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", authenticationUser, usersRouter);
 app.use("/api/v1/clients", authenticationUser, clientsRouter);
 app.use("/api/v1/tasks", authenticationUser, tasksRouter);
+app.use("/api/v1/dashboard", authenticationUser, dashboardRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

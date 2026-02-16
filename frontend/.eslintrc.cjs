@@ -11,6 +11,7 @@ module.exports = {
     rules: {
         'quotes': ['error', 'single'],
         'indent': ['error', 4, { SwitchCase: 1 }],
+        'vue/html-indent': ['error', 2],
         'semi': ['error', 'always'],
         '@typescript-eslint/no-unused-vars': 'off',
         'vue/valid-v-slot': 'off'

@@ -138,15 +138,15 @@ const close = () => {
             </v-col>
             <v-col cols="12" sm="6">
               <v-autocomplete
-                  v-model="localEditedItem.client._id"
-                  :items="clients"
-                  :loading="loadingClients"
-                  @update:search-input="onClientSearch"
-                  @focus="fetchClients()"
-                  no-filter
-                  item-text="name"
-                  item-value="_id"
-                  label="Клиент"
+                v-model="localEditedItem.client._id"
+                :items="clients"
+                :loading="loadingClients"
+                @update:search-input="onClientSearch"
+                @focus="fetchClients()"
+                no-filter
+                item-text="name"
+                item-value="_id"
+                label="Клиент"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12" sm="6">
@@ -156,20 +156,20 @@ const close = () => {
               <v-select v-model="localEditedItem.priority" :items="priorityOptions" label="Приоритет"></v-select>
             </v-col>
             <v-col cols="12" sm="6">
-                <v-menu v-model="isDatepickerOpen" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                            v-model="localEditedItem.dueDate"
-                            label="Срок выполнения"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                            clearable
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="localEditedItem.dueDate" @input="isDatepickerOpen = false"></v-date-picker>
-                </v-menu>
+              <v-menu v-model="isDatepickerOpen" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="localEditedItem.dueDate"
+                    label="Срок выполнения"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    clearable
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="localEditedItem.dueDate" @input="isDatepickerOpen = false"></v-date-picker>
+              </v-menu>
             </v-col>
             <v-col cols="12">
               <v-textarea v-model="localEditedItem.description" label="Описание" rows="3"></v-textarea>

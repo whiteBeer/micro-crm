@@ -10,6 +10,8 @@ export interface Task {
         name?: string
     };
     assigneeId: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface TaskEdit extends Task {

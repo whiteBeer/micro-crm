@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppHeader from '@/components/AppHeader.vue';
 import AppWelcome from '@/components/AppWelcome.vue';
+import AppSnackbar from '@/components/AppSnackbar.vue';
 import { computed } from 'vue';
 import store from '@/store';
 
@@ -22,6 +23,7 @@ const isAuthenticated = computed(() => store.getters['user/isAuthenticated']);
           <AppWelcome v-else />
         </v-main>
       </template>
+      <AppSnackbar />
     </div>
   </v-app>
 </template>

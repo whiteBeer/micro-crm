@@ -19,10 +19,10 @@ const logout = () => {
 <template>
   <div id="header">
     <v-app-bar
-        class="elevation-2"
-        color="primary"
-        dense
-        dark
+      class="elevation-2"
+      color="primary"
+      dense
+      dark
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>
@@ -30,9 +30,9 @@ const logout = () => {
       </v-toolbar-title>
     </v-app-bar>
     <v-navigation-drawer
-        v-model="drawer"
-        temporary
-        app
+      v-model="drawer"
+      temporary
+      app
     >
       <v-list v-if="currentUser">
         <v-list-item>
@@ -66,12 +66,12 @@ const logout = () => {
         </v-list-item>
         <v-list-item v-if="currentUser" value="board" to="/clients">
           <v-list-item-content>
-              <v-list-item-title>Клиенты</v-list-item-title>
+            <v-list-item-title>Клиенты</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-if="currentUser" value="board" to="/tasks">
           <v-list-item-content>
-              <v-list-item-title>Задачи</v-list-item-title>
+            <v-list-item-title>Задачи</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-if="currentUser" value="profile" to="/profile-edit" color="primary">

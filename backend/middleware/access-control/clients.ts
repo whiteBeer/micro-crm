@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { Request, Response, NextFunction } from "express";
 import {NotFoundError, ForbiddenError} from "../../errors";
 import Client from "../../models/Client";

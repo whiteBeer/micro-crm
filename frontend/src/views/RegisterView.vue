@@ -69,13 +69,13 @@ const register = async () => {
                 required
               ></v-text-field>
               <v-text-field
-                  id="password-confirm"
-                  v-model="passwordConfirm"
-                  label="Подтверждение пароля"
-                  name="password-confirm"
-                  prepend-icon="mdi-lock"
-                  type="password"
-                  required
+                id="password-confirm"
+                v-model="passwordConfirm"
+                label="Подтверждение пароля"
+                name="password-confirm"
+                prepend-icon="mdi-lock"
+                type="password"
+                required
               ></v-text-field>
               <v-select v-model="role"
                         :items="['manager', 'admin']"

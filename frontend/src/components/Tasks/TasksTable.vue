@@ -87,17 +87,17 @@ watch(currentUser, (newUser) => {
 <template>
   <v-container>
     <TasksTableControl
-        :selection="props.selection"
-        :resetPage="resetStoreAndFetch"
-        @onAddTask="addTask"
+      :selection="props.selection"
+      :resetPage="resetStoreAndFetch"
+      @onAddTask="addTask"
     />
 
     <TaskModal :open="dialog"
-                 @close="dialog = false"
-                 :editedItem="editedItem" />
+               @close="dialog = false"
+               :editedItem="editedItem" />
 
     <v-alert v-if="error === 'access_denied'" type="error" dense text class="mb-4">
-        {{ error }}
+      {{ error }}
     </v-alert>
     <v-data-table
       :headers="headers"
@@ -106,8 +106,8 @@ watch(currentUser, (newUser) => {
       :options.sync="options"
       :loading="loading"
       :footer-props="{
-          'items-per-page-options': [2, 5, 10, 50],
-          'items-per-page-text': 'Задач на странице'
+        'items-per-page-options': [2, 5, 10, 50],
+        'items-per-page-text': 'Задач на странице'
       }"
       :items-per-page="limit"
       v-if="error !== 'access_denied'"

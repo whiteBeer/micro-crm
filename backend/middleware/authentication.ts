@@ -10,17 +10,13 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
         throw new UnauthenticatedError("Authentication invalid");
     }
     const token = authHeader.split(" ")[1];
-    try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET as string) as IJwtPayload;
-        const user = await User.findById(payload.userId).select("-password");
-        if (user && user._id) {
-            req.user = user;
-            next();
-        } else {
-            throw new UnauthenticatedError("User not found");
-        }
-    } catch (err) {
-        throw new UnauthenticatedError("Authentication invalid");
+    const payload = jwt.verify(token, process.env.JWT_SECRET as string) as IJwtPayload;
+    const user = await User.findById(payload.userId).select("-password");
+    if (user && user._id) {
+        req.user = user;
+        next();
+    } else {
+        throw new UnauthenticatedError("user_not_found");
     }
 };
 

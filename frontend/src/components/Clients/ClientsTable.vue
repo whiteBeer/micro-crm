@@ -77,9 +77,9 @@ resetStoreAndFetch();
 <template>
   <v-container>
     <ClientsTableControl
-        :selection="props.selection"
-        :resetPage="resetStoreAndFetch"
-        @onAddClient="addClient"
+      :selection="props.selection"
+      :resetPage="resetStoreAndFetch"
+      @onAddClient="addClient"
     />
 
     <ClientModal :open="dialog"
@@ -87,7 +87,7 @@ resetStoreAndFetch();
                  :editedItem="editedItem" />
 
     <v-alert v-if="error === 'access_denied'" type="error" dense text class="mb-4">
-        {{ error }}
+      {{ error }}
     </v-alert>
     <v-data-table
       :headers="headers"
@@ -96,8 +96,8 @@ resetStoreAndFetch();
       :options.sync="options"
       :loading="loading"
       :footer-props="{
-          'items-per-page-options': [2, 5, 10, 50],
-          'items-per-page-text': 'Клиентов на странице'
+        'items-per-page-options': [2, 5, 10, 50],
+        'items-per-page-text': 'Клиентов на странице'
       }"
       :items-per-page="limit"
       v-if="error !== 'access_denied'"

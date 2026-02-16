@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue';
 import TasksTable from '@/components/Tasks/TasksTable.vue';
 import TasksKanban from '@/components/Tasks/TasksKanban.vue';
-import store from '@/store';
 
 const tabIndex = ref(0);
 const selection = computed(() => (tabIndex.value === 0 ? 'my' : 'all'));

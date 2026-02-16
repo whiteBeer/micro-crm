@@ -32,21 +32,21 @@ const login = async () => {
           <v-card-text>
             <v-form @submit.prevent="login">
               <v-text-field
-                  v-model="email"
-                  label="Email"
-                  name="email"
-                  prepend-icon="mdi-email"
-                  type="email"
-                  required
+                v-model="email"
+                label="Email"
+                name="email"
+                prepend-icon="mdi-email"
+                type="email"
+                required
               ></v-text-field>
               <v-text-field
-                  id="password"
-                  v-model="password"
-                  label="Пароль"
-                  name="password"
-                  prepend-icon="mdi-lock"
-                  type="password"
-                  required
+                id="password"
+                v-model="password"
+                label="Пароль"
+                name="password"
+                prepend-icon="mdi-lock"
+                type="password"
+                required
               ></v-text-field>
             </v-form>
             <v-alert v-if="error" type="error" dense text>

@@ -35,12 +35,12 @@ const emit = defineEmits(['onAddTask']);
 
     <v-col cols="12" sm="6">
       <v-text-field
-          :disabled="error === 'access_denied'"
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Поиск"
-          single-line
-          hide-details
+        :disabled="error === 'access_denied'"
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Поиск"
+        single-line
+        hide-details
       ></v-text-field>
     </v-col>
   </v-row>

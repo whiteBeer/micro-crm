@@ -8,6 +8,7 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 
+import { showSnackbarMessage } from '@/components/AppSnackbar.vue';
 import './assets/main.css';
 
 Vue.use(Vuetify);
@@ -19,6 +20,12 @@ axios.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             store.dispatch('user/logout');
+        }
+        if (error.response && error.response.status === 403) {
+            showSnackbarMessage({
+                text: error.response.data.msg || 'access_denied',
+                color: 'error'
+            });
         }
         return Promise.reject(error);
     }
