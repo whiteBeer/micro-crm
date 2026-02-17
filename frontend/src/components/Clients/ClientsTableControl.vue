@@ -18,7 +18,6 @@ watch(search, async (val: string) => {
         store.commit('clients/SET_SEARCH', val);
         store.commit('clients/SET_SKIP', 0);
         props.resetPage();
-        store.dispatch('clients/fetchClients', props.selection);
     }, 500);
 });
 
