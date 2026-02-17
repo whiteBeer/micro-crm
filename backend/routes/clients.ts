@@ -14,8 +14,16 @@ import {
     oneClientAccessControl
 } from "../middleware/access-control/clients";
 import {cacheMiddleware} from "../middleware/cache";
+import { paginationValidators } from "../middleware/validation/pagination";
+import { validateRequest } from "../middleware/validate-request";
 
-router.route("/").get(listClientsAccessControl, cacheMiddleware("clients", 300), getClients);
+router.route("/").get(
+    listClientsAccessControl,
+    paginationValidators,
+    validateRequest,
+    cacheMiddleware("clients", 300),
+    getClients
+);
 router.route("/:id").get(oneClientAccessControl, getClient);
 router.route("/").post(createClient);
 router.route("/:id").put(oneClientAccessControl, updateClient);

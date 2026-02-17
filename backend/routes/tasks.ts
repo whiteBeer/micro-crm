@@ -9,14 +9,16 @@ import {
     deleteTask,
     updateTaskStatus
 } from "../controllers/tasks";
+import {listTasksAccessControl} from "../middleware/access-control/tasks";
+import reminderMiddlewareDeferred from "../middleware/reminder";
+import { paginationValidators } from "../middleware/validation/pagination";
+import { validateRequest } from "../middleware/validate-request";
 
-import reminderMiddlewareDefered from "../middleware/reminder";
-
-router.route("/").get(getTasks);
+router.route("/").get(listTasksAccessControl, paginationValidators, validateRequest, getTasks);
 router.route("/:id").get(getTask);
-router.route("/").post(reminderMiddlewareDefered, createTask);
-router.route("/:id").put(reminderMiddlewareDefered, updateTask);
-router.route("/:id").delete(reminderMiddlewareDefered, deleteTask);
+router.route("/").post(reminderMiddlewareDeferred, createTask);
+router.route("/:id").put(reminderMiddlewareDeferred, updateTask);
+router.route("/:id").delete(reminderMiddlewareDeferred, deleteTask);
 router.route("/:id/status").patch(updateTaskStatus);
 
 export default router;
