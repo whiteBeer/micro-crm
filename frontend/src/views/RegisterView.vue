@@ -7,7 +7,7 @@ const router = useRouter();
 
 const username = ref('');
 const email = ref('');
-const role = ref('manager');
+const role = ref('admin');
 const password = ref('');
 const passwordConfirm = ref('');
 

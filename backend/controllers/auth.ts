@@ -1,8 +1,11 @@
-import { IUser, IErrorMongoose } from "../types/global";
+import { IUser, IErrorMongoose, IJwtPayload } from "../types/global";
 import { Request, Response } from "express";
 import User from "../models/User";
-import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnauthenticatedError } from "../errors";
+import { StatusCodes } from "http-status-codes";
+import jwt from "jsonwebtoken";
+import type {JwtPayload} from "jsonwebtoken";
+import {redisClient} from "../db/redis";
 
 const withoutPassword = (user:IUser) => {
     const {password, ...userWithoutPassword} = user.toObject();
@@ -57,7 +60,29 @@ const login = async (req: Request, res: Response) => {
     res.status(StatusCodes.OK).json({ user: withoutPassword(user), token });
 };
 
+const logout = async (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+        const token = authHeader.split(" ")[1];
+        try {
+            const decoded = jwt.decode(token) as JwtPayload;
+            console.log(decoded);
+            if (decoded && decoded.exp) {
+                const ttl = decoded.exp - Math.floor(Date.now() / 1000);
+                if (ttl > 0) {
+                    console.log("Redis cache set: ", `jwt-blacklist:${token}, ttl: ${ttl}`);
+                    await redisClient.setEx(`jwt-blacklist:${token}`, ttl, "true");
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    res.status(StatusCodes.OK).json({ msg: "user_logged_out" });
+};
+
 export {
     register,
-    login
+    login,
+    logout
 };

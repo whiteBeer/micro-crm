@@ -4,6 +4,8 @@ import type { User, UserState, ParamsLogin, ParamsRegister } from '@/types/user'
 
 type UserContext = ActionContext<UserState, unknown>;
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 export default {
     namespaced: true,
     state: {
@@ -34,7 +36,6 @@ export default {
         async login({ commit }: UserContext, credentials: ParamsLogin) {
             commit('CLEAR_ERROR');
             commit('SET_LOADING', true);
-            const backendUrl = import.meta.env.VITE_BACKEND_URL;
             try {
                 const response = await axios.post(`${backendUrl}/auth/login`, credentials);
 
@@ -59,7 +60,6 @@ export default {
         async register({ commit }: UserContext, userData: ParamsRegister) {
             commit('CLEAR_ERROR');
             commit('SET_LOADING', true);
-            const backendUrl = import.meta.env.VITE_BACKEND_URL;
             try {
                 const response = await axios.post(`${backendUrl}/auth/register`, userData);
 
@@ -84,7 +84,6 @@ export default {
         async updateUser({ commit, state }: UserContext, userData: Partial<User>) {
             commit('SET_LOADING', true);
             commit('CLEAR_ERROR');
-            const backendUrl = import.meta.env.VITE_BACKEND_URL;
             try {
                 const response = await axios.put(`${backendUrl}/users/profile`, userData, {
                     headers: {
@@ -106,7 +105,6 @@ export default {
             if (!state.token) {
                 return;
             }
-            const backendUrl = import.meta.env.VITE_BACKEND_URL;
             try {
                 const response = await axios.get(`${backendUrl}/users/me`, {
                     headers: {
@@ -115,18 +113,30 @@ export default {
                 });
                 commit('SET_USER', response.data.user);
             } catch (e) {
-                commit('SET_USER', null);
-                commit('SET_TOKEN', '');
+                const error = e as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_LOADING', false);
             }
         },
 
-        logout({ commit }: UserContext) {
-            localStorage.removeItem('token');
-            commit('SET_TOKEN', '');
-            commit('SET_USER', null);
-
-            commit('clients/SET_DEFAULT_STATE', null, { root: true });
-            commit('tasks/SET_DEFAULT_STATE', null, { root: true });
+        async logout({ commit, state }: UserContext) {
+            try {
+                await axios.post(`${backendUrl}/auth/logout`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${state.token}`
+                    }
+                });
+                localStorage.removeItem('token');
+                commit('SET_TOKEN', '');
+                commit('SET_USER', null);
+                commit('SET_ERROR', null);
+                commit('clients/SET_DEFAULT_STATE', null, { root: true });
+                commit('tasks/SET_DEFAULT_STATE', null, { root: true });
+            } catch (e) {
+                const error = e as AxiosError<{ msg: string }>;
+                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_LOADING', false);
+            }
         }
     },
     getters: {
