@@ -30,7 +30,6 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 
 const app = express();
 const httpServer = createServer(app);
-//TODO:
 const socketServer = startSocketServer(app, httpServer);
 
 app.use(rateLimiter({ windowMs: 15 * 60 * 1000, limit: 10000 }));
@@ -72,6 +71,7 @@ const start = async () => {
         startReminderWorker();
 
         let server;
+        console.log("process.env.RENDER: ", process.env.RENDER);
         if (process.env.RENDER) {
             console.log("App on Render");
             server = app.listen(port, () =>
