@@ -1,7 +1,16 @@
 import { Request, Response } from "express";
+import {invalidateCacheByPrefix, redisClient} from "../db/redis";
 import Client from "../models/Client";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError } from "../errors";
+
+const invalidateCaches = async (userId: string) => {
+    console.log("____");
+    await invalidateCacheByPrefix("clients:" + userId);
+    await invalidateCacheByPrefix("clients:all");
+    await invalidateCacheByPrefix("dashboard:" + userId);
+    await invalidateCacheByPrefix("dashboard:all");
+};
 
 export const getClients = async (req: Request, res: Response) => {
     const managerId = req.user?._id;
@@ -52,15 +61,22 @@ export const getClient = async (req: Request, res: Response) => {
 };
 
 export const createClient = async (req: Request, res: Response) => {
+    const userId = req.user?._id;
     const newClient = {
         ...req.body,
-        managerId: req.user?._id
+        managerId: userId
     };
     const client = await Client.create(newClient);
-    res.status(StatusCodes.OK).json({ client });
+
+    if (req.user?._id) {
+        invalidateCaches(req.user?._id.toString());
+    }
+
+    res.status(StatusCodes.CREATED).json({ client });
 };
 
 export const updateClient = async (req: Request, res: Response) => {
+    const userId = req.user?._id;
     const {
         params: { id: clientId }
     } = req;
@@ -74,6 +90,11 @@ export const updateClient = async (req: Request, res: Response) => {
     if (!updatedClient) {
         throw new NotFoundError(`No client with id ${clientId}`);
     }
+
+    if (req.user?._id) {
+        invalidateCaches(req.user?._id.toString());
+    }
+
     res.status(StatusCodes.OK).json({ updatedClient });
 };
 
@@ -89,5 +110,10 @@ export const deleteClient = async (req: Request, res: Response) => {
     if (!client) {
         throw new NotFoundError(`No client with id ${clientId}`);
     }
+
+    if (req.user?._id) {
+        invalidateCaches(req.user?._id.toString());
+    }
+
     res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
 };

@@ -27,7 +27,7 @@ const fetchStats = async () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const token = store.state.user?.token;
     try {
-        const response = await axios.get(`${backendUrl}/dashboard?selection=${props.selection}`, {
+        const response = await axios.get(`${backendUrl}/dashboard/stats?selection=${props.selection}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

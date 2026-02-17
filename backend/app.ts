@@ -10,7 +10,8 @@ import express, { Request, Response } from "express";
 import notFoundMiddleware from "./middleware/not-found";
 import errorHandlerMiddleware from "./middleware/error-handler";
 import authenticationUser from "./middleware/authentication";
-import connectDB from "./db/connect";
+import connectDB from "./db/mongo";
+import {connectRedis} from "./db/redis";
 
 import { handleShutdown } from "./handle-server-shutdown";
 import authRouter from "./routes/auth";
@@ -61,6 +62,7 @@ const start = async () => {
             throw new Error("MONGO_URI is not defined");
         }
         await connectDB(mongoURI);
+        await connectRedis();
         const server = app.listen(port, () =>
             console.log(`Server is listening on port ${port}...`)
         );
