@@ -4,6 +4,13 @@ import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError } from "../errors";
 import {safeSearchRegExp} from "../util/regexp";
+import {invalidateCacheByPrefix} from "../db/redis";
+
+const invalidateCaches = async (userId: string) => {
+    console.log("____");
+    await invalidateCacheByPrefix("dashboard:" + userId);
+    await invalidateCacheByPrefix("dashboard:all");
+};
 
 export const getTasks = async (req: Request, res: Response) => {
     const assigneeId = req.user?._id;
@@ -105,6 +112,9 @@ export const createTask = async (req: Request, res: Response) => {
     const task = await Task.create(newTask);
 
     res.locals.task = task;
+    if (req.user?._id) {
+        invalidateCaches(req.user?._id.toString());
+    }
 
     res.status(StatusCodes.CREATED).json({ task });
 };
@@ -125,6 +135,9 @@ export const updateTask = async (req: Request, res: Response) => {
     }
 
     res.locals.task = updatedTask;
+    if (req.user?._id) {
+        invalidateCaches(req.user?._id.toString());
+    }
 
     res.status(StatusCodes.OK).json({ updatedTask });
 };
@@ -145,6 +158,10 @@ export const updateTaskStatus = async (req: Request, res: Response) => {
         throw new NotFoundError(`No task with id ${taskId}`);
     }
 
+    if (req.user?._id) {
+        invalidateCaches(req.user?._id.toString());
+    }
+
     res.status(StatusCodes.OK).json({ updatedTask });
 };
 
@@ -160,6 +177,9 @@ export const deleteTask = async (req: Request, res: Response) => {
     }
 
     res.locals.deletedTaskId = taskId;
+    if (req.user?._id) {
+        invalidateCaches(req.user?._id.toString());
+    }
 
     res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
 };
