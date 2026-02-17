@@ -59,7 +59,7 @@ app.use("/api/v1/dashboard", authenticationUser, dashboardRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-const port = process.env.PORT || 3000;
+const port =  Number(process.env.PORT) || 3000;
 
 const start = async () => {
     try {
@@ -70,7 +70,7 @@ const start = async () => {
         await connectDB(mongoURI);
         await connectRedis();
         startReminderWorker();
-        const server = httpServer.listen(port, () =>
+        const server = httpServer.listen(port, "0.0.0.0", () =>
             console.log(`Server is listening on port ${port}...`)
         );
         handleShutdown(server);
