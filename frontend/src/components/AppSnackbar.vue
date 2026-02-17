@@ -1,5 +1,6 @@
 <script lang="ts">
 import Vue from 'vue';
+import { i18n } from '@/utils/localization';
 
 const snackbarState = Vue.observable({
     visible: false,
@@ -8,7 +9,7 @@ const snackbarState = Vue.observable({
 });
 
 export const showSnackbarMessage = (payload: { text: string, color?: string }) => {
-    snackbarState.text = payload.text;
+    snackbarState.text = i18n(payload.text);
     snackbarState.color = payload.color || 'info';
     snackbarState.visible = true;
 };

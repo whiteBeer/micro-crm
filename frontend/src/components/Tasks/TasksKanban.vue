@@ -6,7 +6,7 @@ import TasksKanbanItem from './TasksKanbanItem.vue';
 import draggable from 'vuedraggable';
 import store from '@/store';
 import type { Task } from '@/types/tasks';
-import {getStatusColor} from './util/getStatusColor';
+import { getStatusColor } from '@/utils/getStatusColor';
 import type {DraggableChangeEvent} from '@/types/tasks';
 
 const props = defineProps<{

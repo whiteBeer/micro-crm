@@ -4,6 +4,7 @@ import axios from 'axios';
 import store from '../../store';
 import type { Task, TaskEdit } from '@/types/tasks';
 import type { Client } from '@/types/clients';
+import { i18n } from '@/utils/localization';
 
 const props = defineProps<{
   open: boolean;
@@ -129,7 +130,7 @@ const close = () => {
 
       <v-card-text>
         <v-alert v-if="error" type="error" dense text class="mb-4">
-          {{ error }}
+          {{ i18n(error) }}
         </v-alert>
         <v-container>
           <v-row>

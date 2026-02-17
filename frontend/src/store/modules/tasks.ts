@@ -3,6 +3,7 @@ import type { ActionContext } from 'vuex';
 import type {Task, TaskState, TaskInput, TaskEdit} from '@/types/tasks';
 import type { RootState } from '@/types';
 import type {ClientState} from '@/types/clients';
+import { i18n } from '@/utils/localization';
 
 type TaskContext = ActionContext<TaskState, RootState>;
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -82,7 +83,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         },
@@ -106,7 +107,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         },
@@ -126,7 +127,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         },
@@ -144,7 +145,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 return null;
             }
         },
@@ -165,7 +166,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         }

@@ -1,6 +1,7 @@
 import axios, {AxiosError} from 'axios';
 import type { ActionContext } from 'vuex';
 import type { User, UserState, ParamsLogin, ParamsRegister } from '@/types/user';
+import { i18n } from '@/utils/localization';
 
 type UserContext = ActionContext<UserState, unknown>;
 
@@ -51,7 +52,7 @@ export default {
                 return true;
             } catch (e:unknown) {
                 const error = e as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
                 return false;
             }
@@ -75,7 +76,7 @@ export default {
                 return true;
             } catch (e:unknown) {
                 const error = e as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
                 return false;
             }
@@ -95,7 +96,7 @@ export default {
                 return true;
             } catch (e:unknown) {
                 const error = e as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
                 return false;
             }
@@ -114,7 +115,7 @@ export default {
                 commit('SET_USER', response.data.user);
             } catch (e) {
                 const error = e as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         },
@@ -134,7 +135,7 @@ export default {
                 commit('tasks/SET_DEFAULT_STATE', null, { root: true });
             } catch (e) {
                 const error = e as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         }

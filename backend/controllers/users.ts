@@ -6,16 +6,12 @@ import { BadRequestError, NotFoundError } from "../errors";
 const getUser = async (req: Request, res: Response) => {
     const userId = req.user?._id;
 
-    if (!userId) {
-        throw new BadRequestError("User is not authenticated");
-    }
-
     const user =
         await User.findOne({ _id: userId })
             .select("-password");
 
     if (!user) {
-        throw new NotFoundError(`No user with id ${userId}`);
+        throw new NotFoundError("user_not_found");
     }
 
     res.status(StatusCodes.OK).json({ user });
@@ -27,7 +23,7 @@ const updateUser = async (req: Request, res: Response) => {
     const existingUser = await User.findOne({ _id: userId });
 
     if (!existingUser) {
-        throw new NotFoundError(`No user with id ${userId}`);
+        throw new NotFoundError("user_not_found");
     }
 
     const updatedUser = await User.findOneAndUpdate(

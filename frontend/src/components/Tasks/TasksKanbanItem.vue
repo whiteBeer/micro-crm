@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Task } from '@/types/tasks';
-import {getPriorityColor} from './util/getPriorityColor';
+import { getPriorityColor } from '@/utils/getPriorityColor';
 
 defineProps<{
     task: Task;

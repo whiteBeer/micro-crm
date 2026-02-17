@@ -15,7 +15,7 @@ const withoutPassword = (user:IUser) => {
 const register = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-        throw new BadRequestError("Please provide name, email, and password");
+        throw new BadRequestError("provide_name_email_password");
     }
     const role = req.body.role || "manager";
     const avatar = req.body.avatar || "default_avatar.jpg";
@@ -41,19 +41,19 @@ const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        throw new BadRequestError("Please provide email and password");
+        throw new BadRequestError("email_password_required");
     }
 
     const user = await User.findOne({ email });
 
     if (!user) {
-        throw new UnauthenticatedError("Invalid credentials");
+        throw new BadRequestError("invalid_credentials");
     }
 
     const isPasswordCorrect = await user.comparePassword(password);
 
     if (!isPasswordCorrect) {
-        throw new UnauthenticatedError("Invalid credentials");
+        throw new BadRequestError("invalid_credentials");
     }
 
     const token = await user.createJWT();

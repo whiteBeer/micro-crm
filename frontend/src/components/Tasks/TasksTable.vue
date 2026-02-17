@@ -4,8 +4,8 @@ import TaskModal from './TaskModal.vue';
 import TasksTableControl from './TasksTableControl.vue';
 import store from '@/store';
 import type { Task } from '@/types/tasks';
-import {getPriorityColor} from './util/getPriorityColor';
-import {getStatusColor} from './util/getStatusColor';
+import { getPriorityColor } from '@/utils/getPriorityColor';
+import { getStatusColor } from '@/utils/getStatusColor';
 
 interface ITableOptions {
     page: number;

@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 import type { ActionContext } from 'vuex';
 import type { Client, ClientState, ClientInput } from '@/types/clients';
 import type { RootState } from '@/types';
+import { i18n } from '@/utils/localization';
 
 type ClientContext = ActionContext<ClientState, RootState>;
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -81,7 +82,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         },
@@ -102,7 +103,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         },
@@ -122,7 +123,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         },
@@ -143,7 +144,7 @@ export default {
                 return response;
             } catch (err:unknown) {
                 const error = err as AxiosError<{ msg: string }>;
-                commit('SET_ERROR', error.response?.data?.msg || 'unknown_error');
+                commit('SET_ERROR', i18n(error.response?.data?.msg || 'unknown_error'));
                 commit('SET_LOADING', false);
             }
         }

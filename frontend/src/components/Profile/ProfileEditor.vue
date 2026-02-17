@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue';
 import store from '@/store';
 import type { User } from '@/types/user';
 import { showSnackbarMessage } from '@/components/AppSnackbar.vue';
+import { i18n } from '@/utils/localization';
 
 const currentUser = computed<User | null>(() => store.getters['user/currentUser']);
 const loading = computed(() => store.getters['user/isLoading']);
@@ -52,7 +53,7 @@ watch(currentUser, (newUser) => {
           required
         ></v-text-field>
       </v-form>
-      <v-alert v-if="error" type="error" dense text class="mt-4">{{ error }}</v-alert>
+      <v-alert v-if="error" type="error" dense text class="mt-4">{{ i18n(error) }}</v-alert>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
