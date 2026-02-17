@@ -14,6 +14,7 @@
     "@mdi/font": "^7.0.96",
     "axios": "^1.13.5",
     "chart.js": "^4.5.1",
+    "socket.io-client": "^4.7.4",
     "vue": "^2.7.7",
     "vue-chartjs": "^5.3.3",
     "vue-router": "^3.5.4",

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { socket } from '@/socket';
 import TaskModal from './TaskModal.vue';
 import TasksTableControl from './TasksTableControl.vue';
 import TasksKanbanItem from './TasksKanbanItem.vue';
@@ -82,6 +83,16 @@ const resetStoreAndFetch = async () => {
     store.commit('tasks/SET_TASKS', []);
     await fetchTasks();
 };
+
+onMounted(() => {
+    socket.on('task_updated', (updatedTask: Task) => {
+        store.commit('tasks/UPDATE_TASK', updatedTask);
+    });
+});
+
+onUnmounted(() => {
+    socket.off('task_updated');
+});
 
 watch(() => props.selection, resetStoreAndFetch);
 

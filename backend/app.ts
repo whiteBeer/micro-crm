@@ -7,6 +7,7 @@ import { xss } from "express-xss-sanitizer";
 import rateLimiter from "express-rate-limit";
 
 import express, { Request, Response } from "express";
+import startSocketServer from "./socket-server";
 import notFoundMiddleware from "./middleware/not-found";
 import errorHandlerMiddleware from "./middleware/error-handler";
 import authenticationUser from "./middleware/authentication";
@@ -24,9 +25,13 @@ import dashboardRouter from "./routes/dashboard";
 // Swagger
 import swaggerUI from "swagger-ui-express";
 import YAML from "yamljs";
+import {createServer} from "http";
 const swaggerDocument = YAML.load("./swagger.yaml");
 
 const app = express();
+const httpServer = createServer(app);
+//TODO:
+const socketServer = startSocketServer(app, httpServer);
 
 app.use(rateLimiter({ windowMs: 15 * 60 * 1000, limit: 10000 }));
 app.use(express.json());
@@ -65,7 +70,7 @@ const start = async () => {
         await connectDB(mongoURI);
         await connectRedis();
         startReminderWorker();
-        const server = app.listen(port, () =>
+        const server = httpServer.listen(port, () =>
             console.log(`Server is listening on port ${port}...`)
         );
         handleShutdown(server);

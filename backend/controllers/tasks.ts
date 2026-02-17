@@ -162,6 +162,14 @@ export const updateTaskStatus = async (req: Request, res: Response) => {
         invalidateCaches(req.user?._id.toString());
     }
 
+    // TODO: added as example, wrap as middleware in real system
+    const socketServer = req.app.get("socketServer");
+    if (socketServer && updatedTask.assigneeId) {
+        socketServer.to("globalRoom").emit("task_updated", updatedTask);
+        console.log("Socket emit: task_updated");
+    }
+
+
     res.status(StatusCodes.OK).json({ updatedTask });
 };
 
