@@ -3,16 +3,18 @@ import Task from "../models/Task";
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError } from "../errors";
+import {safeSearchRegExp} from "../util/regexp";
 
 export const getTasks = async (req: Request, res: Response) => {
     const assigneeId = req.user?._id;
-    const search: string = ((req.query.search as string) || "").replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "");
+    const search: string = ((req.query.search as string) || "").replace(safeSearchRegExp, "");
     const selection: string = ((req.query.selection as string) || "");
 
     if (!assigneeId) {
         throw new BadRequestError("User is not authenticated");
     }
 
+    //TODO: in real need to use $text search for better performance
     const filter = search ? {
         $or: [
             { title: { $regex: search, $options: "i" } }

@@ -54,6 +54,8 @@ const ClientSchema = new mongoose.Schema<IClient>({
     timestamps: true
 });
 
+ClientSchema.index({ name: "text" });
+
 ClientSchema.pre("validate", async function () {
     if (!this.email && !this.phone) {
         throw new BadRequestError("either_phone_or_email_required");

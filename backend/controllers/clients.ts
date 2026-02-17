@@ -3,6 +3,7 @@ import {invalidateCacheByPrefix, redisClient} from "../db/redis";
 import Client from "../models/Client";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError } from "../errors";
+import {safeSearchRegExp} from "../util/regexp";
 
 const invalidateCaches = async (userId: string) => {
     console.log("____");
@@ -14,18 +15,17 @@ const invalidateCaches = async (userId: string) => {
 
 export const getClients = async (req: Request, res: Response) => {
     const managerId = req.user?._id;
-    const search:string = ((req.query.search as string) || "").replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "");
+    const search:string = ((req.query.search as string) || "").replace(safeSearchRegExp, "");
     const selection:string = ((req.query.selection as string) || "");
 
     if (!managerId) {
         throw new BadRequestError("User is not authenticated");
     }
 
+    //TODO: in real need to use $text search for better performance
     const filter = search ? {
         $or: [
-            { name: {$regex: search, $options: "i"} },
-            { email: {$regex: search, $options: "i"} },
-            { phone: {$regex: search, $options: "i"} }
+            { name: {$regex: search, $options: "i"} }
         ]
     } : {};
     const selectionFilter =  selection === "all" ? {} : {managerId};
