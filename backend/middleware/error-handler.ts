@@ -8,8 +8,6 @@ const errorHandlerMiddleware = (
     err: BaseError | mongoose.Error | unknown,
     req: Request, res: Response, next: NextFunction
 ) => {
-    console.log(err);
-
     let customError = {
         msg: "unknown_error",
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR

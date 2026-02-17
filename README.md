@@ -23,3 +23,14 @@ npm install && npm run build && npm run preview
 ```
 
 По умолчанию фронтенд запустится на порту 3001.
+
+![](./screens/1.png)
+![](./screens/2.png)
+![](./screens/3.png)
+![](./screens/4.png)
+![](./screens/5.png)
+![](./screens/6.png)
+![](./screens/7.png)
+![](./screens/8.png)
+![](./screens/9.png)
+![](./screens/10.png)
