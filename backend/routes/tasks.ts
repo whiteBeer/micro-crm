@@ -6,21 +6,17 @@ import {
     getTask,
     createTask,
     updateTask,
-    updateTaskStatus,
-    deleteTask
+    deleteTask,
+    updateTaskStatus
 } from "../controllers/tasks";
 
-import {
-    deleteTaskAccessControl,
-    listTasksAccessControl,
-    oneTaskAccessControl
-} from "../middleware/access-control/tasks";
+import reminderMiddlewareDefered from "../middleware/reminder";
 
-router.route("/").get(listTasksAccessControl, getTasks);
-router.route("/:id").get(oneTaskAccessControl, getTask);
-router.route("/").post(createTask);
-router.route("/:id").put(oneTaskAccessControl, updateTask);
-router.route("/:id/status").patch(oneTaskAccessControl, updateTaskStatus);
-router.route("/:id").delete(deleteTaskAccessControl, deleteTask);
+router.route("/").get(getTasks);
+router.route("/:id").get(getTask);
+router.route("/").post(reminderMiddlewareDefered, createTask);
+router.route("/:id").put(reminderMiddlewareDefered, updateTask);
+router.route("/:id").delete(reminderMiddlewareDefered, deleteTask);
+router.route("/:id/status").patch(updateTaskStatus);
 
 export default router;

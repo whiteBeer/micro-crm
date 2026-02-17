@@ -69,7 +69,7 @@ const logout = async (req: Request, res: Response) => {
             console.log(decoded);
             if (decoded && decoded.exp) {
                 const ttl = decoded.exp - Math.floor(Date.now() / 1000);
-                if (ttl > 0) {
+                if (ttl > 0 && redisClient.isOpen) {
                     console.log("Redis cache set: ", `jwt-blacklist:${token}, ttl: ${ttl}`);
                     await redisClient.setEx(`jwt-blacklist:${token}`, ttl, "true");
                 }

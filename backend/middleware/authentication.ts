@@ -12,9 +12,11 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
     const token = authHeader.split(" ")[1];
 
-    const isBlacklisted = await redisClient.get(`jwt-blacklist:${token}`);
-    if (isBlacklisted) {
-        throw new UnauthenticatedError("authentication_invalid_blacklisted");
+    if (redisClient.isOpen) {
+        const isBlacklisted = await redisClient.get(`jwt-blacklist:${token}`);
+        if (isBlacklisted) {
+            throw new UnauthenticatedError("authentication_invalid_blacklisted");
+        }
     }
 
     const payload = jwt.verify(token, process.env.JWT_SECRET as string) as IJwtPayload;

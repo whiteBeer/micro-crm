@@ -12,6 +12,7 @@ import errorHandlerMiddleware from "./middleware/error-handler";
 import authenticationUser from "./middleware/authentication";
 import connectDB from "./db/mongo";
 import {connectRedis} from "./db/redis";
+import { startReminderWorker } from "./worker/reminder";
 
 import { handleShutdown } from "./handle-server-shutdown";
 import authRouter from "./routes/auth";
@@ -63,6 +64,7 @@ const start = async () => {
         }
         await connectDB(mongoURI);
         await connectRedis();
+        startReminderWorker();
         const server = app.listen(port, () =>
             console.log(`Server is listening on port ${port}...`)
         );

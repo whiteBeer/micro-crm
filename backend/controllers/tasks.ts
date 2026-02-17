@@ -101,6 +101,9 @@ export const createTask = async (req: Request, res: Response) => {
         assigneeId: assigneeId
     };
     const task = await Task.create(newTask);
+
+    res.locals.task = task;
+
     res.status(StatusCodes.CREATED).json({ task });
 };
 
@@ -118,6 +121,9 @@ export const updateTask = async (req: Request, res: Response) => {
     if (!updatedTask) {
         throw new NotFoundError(`No task with id ${taskId}`);
     }
+
+    res.locals.task = updatedTask;
+
     res.status(StatusCodes.OK).json({ updatedTask });
 };
 
@@ -136,6 +142,7 @@ export const updateTaskStatus = async (req: Request, res: Response) => {
     if (!updatedTask) {
         throw new NotFoundError(`No task with id ${taskId}`);
     }
+
     res.status(StatusCodes.OK).json({ updatedTask });
 };
 
@@ -149,5 +156,8 @@ export const deleteTask = async (req: Request, res: Response) => {
     if (!task) {
         throw new NotFoundError(`No task with id ${taskId}`);
     }
+
+    res.locals.deletedTaskId = taskId;
+
     res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
 };
