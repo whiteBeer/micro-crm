@@ -67,11 +67,13 @@ const start = async () => {
             throw new Error("MONGO_URI is not defined");
         }
         await connectDB(mongoURI);
-        // await connectRedis();
+        if (!process.env.RENDER) {
+            await connectRedis();
+        }
         startReminderWorker();
 
         console.log("process.env.RENDER: ", process.env.RENDER);
-        const server = app.listen(port, () =>
+        const server = httpServer.listen(port, "0.0.0.0", () =>
             console.log(`Server is listening on port ${port}...`)
         );
         handleShutdown(server);
