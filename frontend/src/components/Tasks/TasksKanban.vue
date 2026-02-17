@@ -124,6 +124,7 @@ watch(currentUser, (newUser) => {
                 @change="onTaskDrop($event, status)"
                 :animation="100"
                 ghost-class="ghost-card"
+                drag-class="drag-card"
               >
                 <TasksKanbanItem
                   v-for="task in columns[status]"
@@ -142,7 +143,14 @@ watch(currentUser, (newUser) => {
 </template>
 
 <style scoped>
-.ghost-card {
-  opacity: 0.5;
+:deep(.ghost-card) {
+  border: 2px solid #3977bf !important;
+  opacity: 1 !important;
 }
+
+:deep(.drag-card) {
+  border: 2px solid #3977bf !important;
+  opacity: 1 !important;
+}
+
 </style>
