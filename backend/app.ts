@@ -70,9 +70,18 @@ const start = async () => {
         await connectDB(mongoURI);
         await connectRedis();
         startReminderWorker();
-        const server = httpServer.listen(port, "0.0.0.0", () =>
-            console.log(`Server is listening on port ${port}...`)
-        );
+
+        let server;
+        if (process.env.RENDER) {
+            console.log("App on Render");
+            server = app.listen(port, () =>
+                console.log(`Server is listening on port ${port}...`)
+            );
+        } else {
+            server = httpServer.listen(port, "0.0.0.0", () =>
+                console.log(`Server is listening on port ${port}...`)
+            );
+        }
         handleShutdown(server);
     } catch (error) {
         console.log(error);
