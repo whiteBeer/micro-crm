@@ -19,7 +19,7 @@ const isAuthenticated = computed(() => store.getters['user/isAuthenticated']);
       </template>
       <template v-else>
         <v-main>
-          <router-view v-if="['/login', '/register'].includes($route.path)" />
+          <router-view v-if="['/login', '/register', '/about'].includes($route.path)" />
           <AppWelcome v-else />
         </v-main>
       </template>

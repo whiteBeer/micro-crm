@@ -14,7 +14,6 @@ const startSocketServer = (app:Express, httpServer:ReturnType<typeof createServe
             console.log("Sockets: client Disconnected ", socket.id);
         });
     });
-    app.set("socketServer", socketServer);
     return socketServer;
 };
 

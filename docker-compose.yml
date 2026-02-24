@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: crm-backend
+    environment:
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/micro-crm
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=jwt_secret_key
+      - JWT_LIFETIME=1d
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - crm-network
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - VITE_BACKEND_URL=/api/v1
+        - VITE_SOCKET_URL=/
+    container_name: crm-frontend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    networks:
+      - crm-network
+
+  mongo:
+    image: mongo:latest
+    container_name: crm-mongo
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - crm-network
+
+  redis:
+    image: redis:alpine
+    container_name: crm-redis
+    networks:
+      - crm-network
+
+networks:
+  crm-network:
+
+volumes:
+  mongo-data:

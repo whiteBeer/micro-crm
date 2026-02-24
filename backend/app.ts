@@ -31,6 +31,7 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 const app = express();
 const httpServer = createServer(app);
 const socketServer = startSocketServer(app, httpServer);
+app.set("socketServer", socketServer);
 
 app.use(rateLimiter({ windowMs: 15 * 60 * 1000, limit: 10000 }));
 app.use(express.json());
@@ -43,7 +44,7 @@ app.use(cors({
 }));
 app.use(xss());
 
-app.use("/api/swagger", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use("/api/v1/swagger", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // routes
 app.get("/", (req: Request, res: Response) => {

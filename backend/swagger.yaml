@@ -59,7 +59,7 @@ paths:
                   type: string
                 password:
                   type: string
-  /users/{id}:
+  /users/me:
     get:
       tags:
         - users
@@ -67,28 +67,6 @@ paths:
         - bearerAuth: []
       summary: Get User
       description: ''
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-          description: User id
-      responses:
-        '200':
-          description: Successful response
-    put:
-      tags:
-        - users
-      security:
-        - bearerAuth: []
-      summary: Update User
-      description: ''
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-          description: User id
       responses:
         '200':
           description: Successful response
