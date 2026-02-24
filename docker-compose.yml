@@ -31,7 +31,7 @@ services:
       - crm-network
 
   mongo:
-    image: mongo:6.0
+    image: mongo:4.4
     container_name: crm-mongo
     volumes:
       - mongo-data:/data/db
