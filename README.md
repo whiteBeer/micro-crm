@@ -1,4 +1,4 @@
-#### Setup
+#### Настройка
 
 BACKEND:
 1. Добавить .env в /backend;
@@ -23,6 +23,20 @@ npm install && npm run build && npm run preview
 ```
 
 По умолчанию фронтенд запустится на порту 3001.
+
+____
+#### ИЛИ
+
+Через Docker:
+1. Добавить .env в /
+2. JWT_SECRET="jwt_secret_very_secret"
+3. JWT_LIFETIME="1h"
+```bash
+docker-compose up -d
+```
+По умолчанию проект запустится на порту 3001. Все запросы к бекенду, в том числе и ws://, 
+тоже будут перенаправляться через порт 3001.
+____
 
 ![](./screens/1.png)
 ![](./screens/2.png)
