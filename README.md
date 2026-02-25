@@ -46,7 +46,7 @@ docker-compose -f docker-compose.dev.yml up
 ____
 Тесты бекенда:
 ```bash
-docker-compose -f docker-compose.test.yml run backend-test && docker-compose -f docker-compose.test.yml down -v --remove-orphans
+docker-compose -f docker-compose.test.yml run --rm backend-test && docker-compose -f docker-compose.test.yml down -v --remove-orphans
 ```
 
 ____
