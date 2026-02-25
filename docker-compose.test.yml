@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend-test:
+    build: ./backend
+    container_name: crm-backend-test
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - PORT=3002
+      - MONGO_URI=mongodb://mongo-test:27017/micro-crm-test
+      - REDIS_URL=redis://redis-test:6379
+      - JWT_SECRET=test_secret
+      - JWT_LIFETIME=1h
+    command: npm test
+    depends_on:
+      - mongo-test
+      - redis-test
+    networks:
+      - crm-network-test
+
+  mongo-test:
+    image: mongo:4.4
+    container_name: crm-mongo-test
+    networks:
+      - crm-network-test
+
+  redis-test:
+    image: redis:alpine
+    container_name: crm-redis-test
+    networks:
+      - crm-network-test
+
+networks:
+  crm-network-test:

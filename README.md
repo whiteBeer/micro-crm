@@ -36,6 +36,19 @@ docker-compose up -d
 ```
 По умолчанию проект запустится на порту 3001. Все запросы к бекенду, в том числе и ws://, 
 тоже будут перенаправляться через порт 3001.
+
+____
+Режим разработчика:
+```bash
+docker-compose -f docker-compose.dev.yml up
+```
+
+____
+Тесты бекенда:
+```bash
+docker-compose -f docker-compose.test.yml run backend-test && docker-compose -f docker-compose.test.yml down -v --remove-orphans
+```
+
 ____
 
 ![](./screens/1.png)
