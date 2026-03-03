@@ -4,9 +4,9 @@ import {connectRedis, redisClient} from "../db/redis";
 
 // important if run tests without Docker
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 
-describe("MongoDB Connection", () => {
+describe("Environment Connections", () => {
     beforeEach(async () => {
         if (mongoose.connection.readyState !== 0) {
             await mongoose.connection.close();

@@ -6,7 +6,7 @@ import connectDB from "../db/mongo";
 
 // important if run tests without Docker
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 
 beforeAll(async () => {
     const mongoURI = process.env.MONGO_URI;
