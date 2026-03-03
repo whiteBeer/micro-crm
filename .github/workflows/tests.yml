@@ -14,4 +14,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run backend tests with Docker Compose
-        run: docker-compose -p crm-test -f docker-compose.test.yml run --rm backend-test
+        run: docker compose -p crm-test -f docker-compose.test.yml run --rm backend-test
